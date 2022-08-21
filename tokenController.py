@@ -157,6 +157,14 @@ class TokenController:
     def final_parenthesis(tokenText):
         return Token(tokenText, TokenType.FINAL_PARENTESIS)
 
+    @staticmethod
+    def true(tokenText):
+        return Token(tokenText, TokenType.True_k)
+
+    @staticmethod
+    def false(tokenText):
+        return Token(tokenText, TokenType.False_k)
+
 class TokenType(enum.Enum):
     EOF = -1
     NEWLINE = 0
@@ -180,11 +188,11 @@ class TokenType(enum.Enum):
     IsTrue = 114
     Repeat = 115
     Until = 116
-    PrintValues = 115
-    True_k = 116
-    False_k = 117
-    Num = 118
-    Bool = 119
+    PrintValues = 117
+    True_k = 118
+    False_k = 119
+    Num = 120
+    Bool = 121
 	# Operators.
     EQUAL = 201  
     ADD = 202

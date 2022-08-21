@@ -10,7 +10,7 @@ from lex import *
 # 		lexer.nextChar()
 
 def main():
-    input = "ADD<===<>>Values<PrintValues<Hammer@variable,>741Num>Bool)()"
+    input = "ADD<===<>>Values<PrintValues<Hammer@variable,>741Num>Bool>True"
     lexer = Lexer(input)
 
     token = lexer.getToken()
