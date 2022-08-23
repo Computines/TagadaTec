@@ -189,10 +189,6 @@ class TokenType(enum.Enum):
     Repeat = 115
     Until = 116
     PrintValues = 117
-    True_k = 118
-    False_k = 119
-    Num = 120
-    Bool = 121
 	# Operators.
     EQUAL = 201  
     ADD = 202
@@ -209,6 +205,10 @@ class TokenType(enum.Enum):
     INITIAL_PARENTESIS = 213
     FINAL_PARENTESIS = 214
     COMMA = 215
+    True_k = 216
+    False_k = 217
+    Num = 218
+    Bool = 219
     #positions
     N = 301
     S = 302
@@ -231,3 +231,11 @@ class Token:
             elif kind.name == tokenText+'_k': #check for true and false 
                 return tokenText
         return None
+
+    @staticmethod
+    def checkIfKeyword(tokenText):
+        for kind in TokenType:
+            # identifies keywords or operator
+            if kind.name == tokenText and kind.value >= 100 and kind.value < 200 :
+                return True
+        return False

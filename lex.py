@@ -122,7 +122,7 @@ class Lexer:
             keyValue = tokenText
 
         try:
-            print(tokenText)
+           # print(tokenText)
             controller = posibleTokens.get(keyValue) 
             token = controller(tokenText) 
         except:
