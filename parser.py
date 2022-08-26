@@ -1,7 +1,7 @@
-from ast import keyword
+from os import abort
 import sys
-from traceback import print_tb
 from lex import *
+from statementAnalizer import StatementAnalizer
 
 # Parser object keeps track of current token and checks if the code matches the grammar.
 class Parser:
@@ -54,13 +54,16 @@ class Parser:
                 print("complied completed")
                 break
             else:
-                self.abort("Sintax error: Statemente no initialize by keyword")
+                self.abort("Sintax error: Statement not initialize by keyword")
 
     def statement(self):
         keyword = self.curToken
         tokenList = []
+
         while self.curToken.text != ';':
-            tokenList.append(self.curToken.text)
+            # print(self.curToken.text)
+            if self.curToken.text != "\n" and self.curToken.text != ";":
+                tokenList.append(self.curToken.text)
             if self.checkToken(TokenType.Alter) or self.checkToken(TokenType.IsTrue):
                 while self.peekToken.text != ')':
                     self.nextToken()
@@ -70,8 +73,11 @@ class Parser:
             if Token.checkIfKeyword(self.peekToken.text):
                 self.nextToken()
                 tokenList.append(self.statement().text)
+                continue
             self.nextToken()
-        # statementAnalizer.Analize(Lista)
+            # print(self.curToken.text)
+        # if not StatementAnalizer.analize(tokenList):
+        #     self.abort("Sintax Error")
         # if true :
                 # Emitter(Lista)
         self.nextToken()

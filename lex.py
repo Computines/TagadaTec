@@ -65,7 +65,7 @@ class Lexer:
             '\0' : TokenController.eof,
             ';' : TokenController.semiColon,
             ',' : TokenController.comma,
-            'variable' : TokenController.variable,
+            '@' : TokenController.variable,
             'New' : TokenController.new,
             'Values' : TokenController.values,
             'Alter' : TokenController.alter,            
@@ -104,7 +104,7 @@ class Lexer:
             initial = self.curChar 
             tokenText = self.keyWordsOrIdentifiers()
             if initial == '@':
-                keyValue = 'variable'
+                keyValue = '@'
             else:
                 keyValue = tokenText
         elif self.curChar.isdigit():
@@ -126,7 +126,7 @@ class Lexer:
             controller = posibleTokens.get(keyValue) 
             token = controller(tokenText) 
         except:
-            self.abort("Unknown token: " + self.curChar)
+            self.abort("Unknown token: " + keyValue)
 
         self.nextChar()
         return token
@@ -148,7 +148,7 @@ class Lexer:
             self.nextChar()
 
         tokenText = self.source[startPos:self.curPos+1]
-        keyword = Token.checkTokenType(tokenText)
+        keyword = Token.checkTokenType(tokenText) and Token.checkTokenType(tokenText).name
         
         if keyword == None: # it is a variable 
             return tokenText
