@@ -59,7 +59,8 @@ class Parser:
     def statement(self):
         keyword = self.curToken
         tokenList = []
-
+        tokenList.append(keyword.text)
+        self.nextToken()
         while self.curToken.text != ';':
             # print(self.curToken.text)
             if self.curToken.text != "\n" and self.curToken.text != ";":
@@ -70,9 +71,10 @@ class Parser:
                     tokenList.append(self.curToken.text)
                 tokenList.append(self.peekToken.text)
                 break
-            if Token.checkIfKeyword(self.peekToken.text):
-                self.nextToken()
+            if Token.checkIfKeyword(self.peekToken.text) or Token.checkIfKeyword(self.curToken.text):
+                if Token.checkIfKeyword(self.peekToken.text): self.nextToken()
                 tokenList.append(self.statement().text)
+                # print(self.curToken.text)
                 continue
             self.nextToken()
             # print(self.curToken.text)
