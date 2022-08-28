@@ -66,6 +66,7 @@ class Lexer:
             ';' : TokenController.semiColon,
             ',' : TokenController.comma,
             '@' : TokenController.variable,
+            '@Principal' : TokenController.principal,
             'New' : TokenController.new,
             'Values' : TokenController.values,
             'Alter' : TokenController.alter,            
@@ -90,7 +91,13 @@ class Lexer:
             '(' : TokenController.initial_parenthesis,
             ')' : TokenController.final_parenthesis,
             'True' : TokenController.true,
-            'False' : TokenController.false
+            'False' : TokenController.false,
+            'Proc' : TokenController.proc,
+            'CALL' : TokenController.call,
+            'N' : TokenController.n,
+            'S' : TokenController.s,
+            'E' : TokenController.e,
+            'O' : TokenController.o    
         } 
 
         tokenText = self.curChar
@@ -104,7 +111,10 @@ class Lexer:
             initial = self.curChar 
             tokenText = self.keyWordsOrIdentifiers()
             if initial == '@':
-                keyValue = '@'
+                if tokenText == '@Principal':
+                    keyValue = '@Principal'
+                else:
+                    keyValue = '@'
             else:
                 keyValue = tokenText
         elif self.curChar.isdigit():

@@ -165,6 +165,38 @@ class TokenController:
     def false(tokenText):
         return Token(tokenText, TokenType.False_k)
 
+    @staticmethod
+    def principal(tokenText):
+        return Token(tokenText, TokenType.Principal)
+
+    @staticmethod
+    def call(tokenText):
+        return Token(tokenText, TokenType.CALL)
+
+    @staticmethod
+    def proc(tokenText):
+        return Token(tokenText, TokenType.Proc)
+
+    @staticmethod
+    def e(tokenText):
+        return Token(tokenText, TokenType.E)
+
+    @staticmethod
+    def o(tokenText):
+        return Token(tokenText, TokenType.O)
+
+    @staticmethod
+    def s(tokenText):
+        return Token(tokenText, TokenType.S)
+
+    @staticmethod
+    def n(tokenText):
+        return Token(tokenText, TokenType.N)
+
+    @staticmethod
+    def Break(tokenText):
+        return Token(tokenText, TokenType.Break)
+
 class TokenType(enum.Enum):
     EOF = -1
     NEWLINE = 0
@@ -186,6 +218,10 @@ class TokenType(enum.Enum):
     Repeat = 112
     Until = 113
     PrintValues = 114
+    Proc = 115
+    CALL = 116
+    Principal = 117
+    Break = 118
 	# Operators.
     EQUAL = 201  
     ADD = 202

@@ -1,5 +1,4 @@
-from ast import parse
-from sqlite3 import paramstyle
+
 from lex import *
 from parser import *
 
@@ -17,11 +16,11 @@ def main():
     # input = "New @variable, (New, 5);\n"
     lexer = Lexer(input)
     parser = Parser(lexer)
-    # token = lexer.getToken()
+    #token = lexer.getToken()
     parser.program()
 
-    # while token.kind != TokenType.EOF:
-    #     print(token.kind)   
-    #     token = lexer.getToken()
+    #while token.kind != TokenType.EOF:
+    #    print(token.kind)   
+    #    token = lexer.getToken()
 
-main()
+main() 
