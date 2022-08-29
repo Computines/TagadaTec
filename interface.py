@@ -3,7 +3,7 @@ from distutils.cmd import Command
 from tkinter import *
 from tkinter import ttk
 from os import *
-from turtle import bgcolor
+from turtle import bgcolor, right
 from winreg import REG_DWORD_BIG_ENDIAN
 import tkinter.font as tkfont
 
@@ -78,26 +78,31 @@ class Interface:
         openedFile.place(x=WIDTH/2,y=TOOLBWIDTH/4,anchor="center")
 
         ########################## TREE DIRECTORY ###########################
-        directory='/Documentos/TEC/2022/II Semestre/'
+        yscrollTree = Scrollbar(folderbar, orient="vertical")
+        xscrollTree = Scrollbar(folderbar, orient="horizontal")
+        yscrollTree.place(x=FOLDERWIDTH, y=0, anchor=NE, height=HEIGHT-MENUHEIGHT-15)
+        xscrollTree.place(x=0, y=HEIGHT-MENUHEIGHT, anchor=SW, width=FOLDERWIDTH)
+
+        directory='/Documentos/TEC/'
         treeFrame=Frame(folderbar, bg=FOLDERBAR, height=HEIGHT-MENUHEIGHT-15, width=FOLDERWIDTH-15)
         treeStyle = ttk.Style(treeFrame)
         treeStyle.theme_use("alt")
         treeStyle.configure("Treeview", background=FOLDERBAR, foreground="#dedede", fieldbackground=FOLDERBAR)
         treeStyle.configure("Treeview", highlightthickness=0, bd=0, font=('Arial', 10))
         treeStyle.layout("Treeview", [('Treeview.treearea', {'sticky': 'nswe'})])
-        treeStyle.map("Treeview", background = [('selected',LIGHTERBG)])
+        treeStyle.map("Treeview", background = [('selected', LIGHTERBG)])
         def fixed_map(option):
             return [elm for elm in treeStyle.map('Treeview', query_opt=option) if
             elm[:2] != ('!disabled', '!selected')]
         treeStyle.map('Treeview', 
             foreground=fixed_map('foreground'),
             background=fixed_map('background'))
-        folderTree=ttk.Treeview(treeFrame,show='tree',height=HEIGHT-MENUHEIGHT-15)
+        folderTree=ttk.Treeview(treeFrame, show='tree', yscrollcommand=yscrollTree.set,  xscrollcommand=xscrollTree.set)
         folderTree.heading('#0',text='directory:'+ directory,anchor='w')
-        folderTree.heading('#0',text='Dir：'+directory,anchor='w')
+        folderTree.heading('#0', text='Dir：'+directory, anchor='w')
         directory=path.abspath(directory)
-        node=folderTree.insert('','end',text=path,open=True)
-        def traverse_dir(parent,directory):
+        node=folderTree.insert('','end', text=path, open=True)
+        def traverse_dir(parent, directory):
             for d in listdir(directory):
                 full_path=path.join(directory,d)
                 isdir = path.isdir(full_path)
@@ -106,7 +111,10 @@ class Interface:
                     traverse_dir(id,full_path)
         traverse_dir(node,directory)
 
-        folderTree.pack(fill=BOTH)
+        xscrollTree.config(command=folderTree.xview)
+        yscrollTree.config(command=folderTree.yview)
+
+        folderTree.place(x=0, y=0, height=HEIGHT-MENUHEIGHT-15, width=FOLDERWIDTH-15)
         treeFrame.place(x=0, y=0)
 
         ########################## BUTTON FUNCTIONS ###########################
@@ -195,14 +203,13 @@ class Interface:
             numbArea.yview(*args)
 
 
-        yscrollCode = ttk.Scrollbar(mainPanel, orient="vertical")
-        xscrollCode = ttk.Scrollbar(mainPanel, orient="horizontal")
-        yscrollCode.pack(side=RIGHT, fill=Y)
-        xscrollCode.pack(side=BOTTOM, fill=X)
+        yscrollCode = Scrollbar(mainPanel, orient="vertical")
+        xscrollCode = Scrollbar(mainPanel, orient="horizontal")
+        yscrollCode.place(x=WIDTH-TOOLBWIDTH-FOLDERWIDTH-NUMBERSWIDTH, y=0, anchor=NE, height=HEIGHT-MENUHEIGHT-15)
+        xscrollCode.place(x=0, y=HEIGHT-MENUHEIGHT, anchor=SW, width=WIDTH-TOOLBWIDTH-FOLDERWIDTH-NUMBERSWIDTH)
 
-        codingArea= Text(mainPanel, background=BACKGROUND, highlightthickness=0, highlightcolor=BACKGROUND, fg= 'white', insertbackground='white', yscrollcommand=yscrollCode.set, xscrollcommand=xscrollCode.set, wrap="none")
-        #codingArea.place(x=-1,y=-1)
-        codingArea.pack(fill=BOTH)
+        codingArea= Text(mainPanel, background=BACKGROUND, highlightthickness=0, height=31, width=110, highlightcolor=BACKGROUND, fg= 'white', insertbackground='white', yscrollcommand=yscrollCode.set, xscrollcommand=xscrollCode.set, wrap="none")
+        codingArea.place(x=-1,y=-1)
         codingArea.config(spacing1=SPACING)    # Spacing above the first line in a block of text
         font = tkfont.Font(font=codingArea['font'])
         tab_size = font.measure('    ')
