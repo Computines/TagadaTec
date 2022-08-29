@@ -202,7 +202,7 @@ class Interface:
 
         codingArea= Text(mainPanel, background=BACKGROUND, highlightthickness=0, highlightcolor=BACKGROUND, fg= 'white', insertbackground='white', yscrollcommand=yscrollCode.set, xscrollcommand=xscrollCode.set, wrap="none")
         #codingArea.place(x=-1,y=-1)
-        codingArea.pack(side= RIGHT, fill=BOTH)
+        codingArea.pack(fill=BOTH)
         codingArea.config(spacing1=SPACING)    # Spacing above the first line in a block of text
         font = tkfont.Font(font=codingArea['font'])
         tab_size = font.measure('    ')
