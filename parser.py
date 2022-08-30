@@ -70,6 +70,7 @@ class Parser:
         tokenList = []
 
         if self.checkToken(TokenType.Alter) or self.checkToken(TokenType.IsTrue):
+            tokenList.append(self.curToken.text)
             while self.peekToken.text != ')':
                 self.nextToken()
                 tokenList.append(self.curToken.text)
@@ -78,7 +79,7 @@ class Parser:
 
         while self.curToken.text != ';':
             if Token.checkIfKeyword(self.curToken.text) and self.curToken.text != keyword.text and not self.checkToken(TokenType.Proc):
-                tokenList.append(self.statement())
+                tokenList.append(self.statement()) # Recursive Call
             elif self.checkToken(TokenType.Proc):
                 self.abort("Sintax Error: Proc inside a statement")
             elif self.curToken.text != "\n" and self.curToken.text != ";":
