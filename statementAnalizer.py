@@ -19,7 +19,7 @@ class StatementAnalizer():
         "Stop" : regexGenerator('Stop'),
         "IsTrue": regexGenerator('IsTrue INITIAL_PARENTESIS VARIABLE_NAME FINAL_PARENTESIS'),
         "PrintValues" : regexGenerator('INITIAL_PARENTESIS [STRING|VARIABLE_NAME] FINAL_PARENTESIS')
-    } 
+    }
     def __init__(self) -> None:
         pass
 
@@ -40,5 +40,6 @@ class StatementAnalizer():
         else:
             return False
 
+if __name__ == "__main__":
 
 
