@@ -1,5 +1,3 @@
-from tkinter import S
-from tokenize import Token
 from typing import List
 import regex as rex
 from tokenController import Token
@@ -20,6 +18,7 @@ class StatementAnalizer():
         "IsTrue": regexGenerator('IsTrue INITIAL_PARENTESIS VARIABLE_NAME FINAL_PARENTESIS'),
         "PrintValues" : regexGenerator('INITIAL_PARENTESIS [STRING|VARIABLE_NAME] FINAL_PARENTESIS')
     } 
+
     def __init__(self) -> None:
         pass
 
