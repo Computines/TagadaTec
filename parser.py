@@ -51,6 +51,7 @@ class Parser:
             #print(self.curToken.text)
             if self.checkToken(TokenType.Proc):
                 self.analizeProc()
+                self.nextToken()
             elif Token.checkIfKeyword(self.curToken.text):
                 print(self.statement())
                 self.nextToken()
@@ -61,8 +62,25 @@ class Parser:
                 self.abort("Sintax error: Statement not initialize by keyword")
 
     def analizeProc(self):
+        procName = ""
         while self.curToken.text != ';':
-            pass
+            if self.checkToken(TokenType.Proc):
+                self.abort("Sintax error: Proc into a proc")
+            elif self.checkToken(TokenType.VARIABLE_NAME):
+                procName = self.curToken.text
+                self.nextToken()
+            elif Token.checkIfKeyword(self.curToken.text):
+                print(self.statement())
+                self.nextToken()
+            elif self.curToken.text == "\n":
+                self.nextToken()
+            elif self.curToken.text == ")" and self.peekToken.text == ";":
+                self.nextToken()
+                return
+            elif self.checkToken(TokenType.EOF):
+                self.abort("Sintax Error: Proc never finalize")
+            else:
+                self.abort("Sintax error: Statement not initialize by keyword")
 
 
     def statement(self):
@@ -82,6 +100,8 @@ class Parser:
                 tokenList.append(self.statement()) # Recursive Call
             elif self.checkToken(TokenType.Proc):
                 self.abort("Sintax Error: Proc inside a statement")
+            elif self.checkToken(TokenType.EOF):
+                self.abort("Sintax Error: Statement never finalize")
             elif self.curToken.text != "\n" and self.curToken.text != ";":
                 tokenList.append(self.curToken.text)
             self.nextToken()
