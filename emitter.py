@@ -5,6 +5,7 @@ from turtle import pos
 # ['Alter', '(', '@variable1', ',', 'SUB', ',', '3', ')']
 # ['Values', '(', '@variable2', ',', '51', ')']
 # ['Until', '(', '[MoveRight]', ')', '@variable3', operador, '@variable4' ]
+# ['Case', '@mellamocarlos', 'When', '1', 'Then', '(', 'MoveRight', 'MoveLeft', 'MoveLeft', ')', 'When', '2', 'Then', '(', 'MoveLeft', ')']
 
 class Emitter:
 
