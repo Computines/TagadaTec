@@ -1,4 +1,5 @@
 from tokenController import TokenType, Token
+import regex as rex
 
 informalRegex = 'New VARIABLE_NAME COMMA INITIAL_PARENTESIS [Num|Bool] COMMA [Number|True|False|Alter] FINAL_PARENTESIS'
 
@@ -12,11 +13,15 @@ def regexGenerator(informalRegex):
             for t in orList:
                 orRegex += f"({Token.checkTokenType(t, 0).value})"
             finalRegex += orRegex.replace(")(", "|")
+        elif token == "*":
+            finalRegex += ".*"
         else:
             finalRegex += f"({Token.checkTokenType(token, 0).value})"
         # print(finalRegex)
     return finalRegex
 
 if __name__ == "__main__":
-    print(regexGenerator(informalRegex))
+    finalRegex = regexGenerator(informalRegex)
+    print(finalRegex)
+    # print(rex.fullmatch(r"{x}".format(x=finalRegex), ""))
 

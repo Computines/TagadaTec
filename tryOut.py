@@ -11,9 +11,9 @@ from parser import *
 # 		lexer.nextChar()
 
 def main():
-    input = "New @variable, (Num, 5);\n Values(@variable2, Alter(@variable1, SUB, 3));\n Values(@variable2, 51);\n MoveRight;\n Case @mellamocarlos \n When 1 Then \n ( MoveRight;\n MoveLeft;\n ) \n When 2 Then \n ( MoveLeft;\n );"
-    #input = "Case @mellamocarlos \n When 1 Then \n ( MoveRight;\n MoveLeft;\n ) \n When 2 Then \n ( MoveLeft;\n );"
-    # input = "New @variable, (New, 5);\n"
+    # input = "New @variable, (Num, 5);\n Values(@variable2, Alter(@variable1, SUB, 3));\n Values(@variable2, 51);\n MoveRight;\n Case @mellamocarlos \n When 1 Then \n ( MoveRight;\n MoveLeft;\n ) \n When 2 Then \n ( MoveLeft;\n );"
+    # input = "Case @mellamocarlos \n When 1 Then \n ( MoveRight;\n MoveLeft;\n ) \n When 2 Then \n ( MoveLeft;\n );"
+    input = "ProcValues(@variable2, Alter(@variable1, SUB, 3));\n"
     lexer = Lexer(input)
     parser = Parser(lexer)
     #token = lexer.getToken()
@@ -23,4 +23,4 @@ def main():
     #    print(token.kind)   
     #    token = lexer.getToken()
 
-main() 
+main()

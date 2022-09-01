@@ -39,5 +39,6 @@ class StatementAnalizer():
         else:
             return False
 
+if __name__ == "__main__":
 
 

@@ -1,7 +1,8 @@
 from os import abort
 import sys
+from tokenController import TokenType
 from lex import *
-from statementAnalizer import StatementAnalizer
+# from statementAnalizer import StatementAnalizer
 
 # Parser object keeps track of current token and checks if the code matches the grammar.
 class Parser:
@@ -48,42 +49,63 @@ class Parser:
                 self.nextToken()
 
             #print(self.curToken.text)
-            if Token.checkIfKeyword(self.curToken.text):
-                self.statement()
+            if self.checkToken(TokenType.Proc):
+                self.analizeProc()
+                self.nextToken()
+            elif Token.checkIfKeyword(self.curToken.text):
+                print(self.statement())
+                self.nextToken()
             elif self.checkToken(TokenType.EOF):
                 print("complied completed")
                 break
             else:
                 self.abort("Sintax error: Statement not initialize by keyword")
 
+    def analizeProc(self):
+        procName = ""
+        while self.curToken.text != ';':
+            if self.checkToken(TokenType.Proc):
+                self.abort("Sintax error: Proc into a proc")
+            elif self.checkToken(TokenType.VARIABLE_NAME):
+                procName = self.curToken.text
+                self.nextToken()
+            elif Token.checkIfKeyword(self.curToken.text):
+                print(self.statement())
+                self.nextToken()
+            elif self.curToken.text == "\n":
+                self.nextToken()
+            elif self.curToken.text == ")" and self.peekToken.text == ";":
+                self.nextToken()
+                return
+            elif self.checkToken(TokenType.EOF):
+                self.abort("Sintax Error: Proc never finalize")
+            else:
+                self.abort("Sintax error: Statement not initialize by keyword")
+
+
     def statement(self):
         keyword = self.curToken
         tokenList = []
-        tokenList.append(keyword.text)
-        self.nextToken()
-        while self.curToken.text != ';':
-            # print(self.curToken.text)
-            if self.curToken.text != "\n" and self.curToken.text != ";":
+
+        if self.checkToken(TokenType.Alter) or self.checkToken(TokenType.IsTrue):
+            tokenList.append(self.curToken.text)
+            while self.peekToken.text != ')':
+                self.nextToken()
                 tokenList.append(self.curToken.text)
-            if self.checkToken(TokenType.Alter) or self.checkToken(TokenType.IsTrue):
-                while self.peekToken.text != ')':
-                    self.nextToken()
-                    tokenList.append(self.curToken.text)
-                tokenList.append(self.peekToken.text)
-                break
-            if Token.checkIfKeyword(self.peekToken.text) or Token.checkIfKeyword(self.curToken.text):
-                if Token.checkIfKeyword(self.peekToken.text): self.nextToken()
-                tokenList.append(self.statement().text)
-                # print(self.curToken.text)
-                continue
+            tokenList.append(self.peekToken.text)
+            return tokenList
+
+        while self.curToken.text != ';':
+            if Token.checkIfKeyword(self.curToken.text) and self.curToken.text != keyword.text and not self.checkToken(TokenType.Proc):
+                tokenList.append(self.statement()) # Recursive Call
+            elif self.checkToken(TokenType.Proc):
+                self.abort("Sintax Error: Proc inside a statement")
+            elif self.checkToken(TokenType.EOF):
+                self.abort("Sintax Error: Statement never finalize")
+            elif self.curToken.text != "\n" and self.curToken.text != ";":
+                tokenList.append(self.curToken.text)
             self.nextToken()
-            # print(self.curToken.text)
-        # if not StatementAnalizer.analize(tokenList):
-        #     self.abort("Sintax Error")
-        # if true :
-                # Emitter(Lista)
-        self.nextToken()
-        print(tokenList)
-        return keyword
+
+        return tokenList
         
         
