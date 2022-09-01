@@ -15,6 +15,7 @@ class Emitter:
         self.nextToken = None
         self.localVariables = []
         self.globalVariables = []
+        self.identation = "    "
 
     def abort(self, message):
         sys.exit("Error. " + message)
@@ -82,14 +83,20 @@ class Emitter:
     def untilStatement(self, input):
         operating1Position = 0 
         
-        instructions = "instructions"
+        instructions = "    #instructions"
 
         for positions in range(1, len(input) + 1 ):
             if isinstance(input[positions], list):
                 if input[positions][0] == 'Values':
-                    instructions = instructions + '\n' + self.valuesStatement(input[positions], False) 
+                    instructions = instructions + '\n' + self.identation + self.valuesStatement(input[positions], False) 
+                elif input[positions][0] == 'MoveRight':
+                    instructions = instructions + '\n' + self.identation + self.moveRight()
+                elif input[positions][0] == 'MoveLeft':
+                    instructions = instructions + '\n' + self.identation + self.moveLeft()
+                elif input[positions][0] == 'Stop':
+                    instructions = instructions + '\n' + self.identation + self.stop()
                 else:
-                    instructions = instructions + '\n' + input[positions][0] 
+                    instructions = instructions + '\n' + self.identation + input[positions][0] 
             elif input[positions] == '(' or input[positions] == ')':
                 pass
             else:
@@ -107,7 +114,7 @@ class Emitter:
 
     def whileStatement(self, input):
 
-        instructions = "instructions"
+        instructions = "    #instructions"
 
         if isinstance(input[1], list):
             pass
@@ -123,14 +130,31 @@ class Emitter:
             for positions in range(4, len(input)):
                 if isinstance(input[positions], list):
                     if input[positions][0] == 'Values':
-                        instructions = instructions + '\n' +  self.valuesStatement(input[positions], False)
+                        instructions = instructions + '\n' + self.identation + self.valuesStatement(input[positions], False)
+                    elif input[positions][0] == 'MoveRight':
+                        instructions = instructions + '\n' + self.identation + self.moveRight()
+                    elif input[positions][0] == 'MoveLeft':
+                        instructions = instructions + '\n' + self.identation + self.moveLeft()
+                    elif input[positions][0] == 'Stop':
+                        instructions = instructions + '\n' + self.identation + self.stop()
                     else:
-                        instructions = instructions + '\n' + input[positions][0] 
+                        instructions = instructions + '\n' + self.identation + input[positions][0] 
                 elif input[positions] == '(' or input[positions] == ')':
                     pass
         
             self.emitLine('while ' + condition + ':' + '\n' + instructions)           
 
+    def moveRight(self):
+        #self.emitLine("# MoveRight")
+        return "# MoveRight"
+
+    def moveLeft(self):
+        #self.emitLine("# MoveLeft")
+        return "# MoveLeft"
+
+    def stop(self):
+        #self.emitLine("# Stop")
+        return "# Stop"
     
     def printCode(self):
         return self.code
