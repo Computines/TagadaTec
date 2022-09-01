@@ -24,21 +24,21 @@ class Emitter:
     def emitLine(self, line):
         self.code += line + '\n'
 
+    def emitIdentation(self):
+        self.code += "    "
+
     def writeFile(self):
         with open(self.path, 'w') as file:
             file.write(self.code)
 
-    def newVariable (self, input, emitLineFlag):
+    def newVariable (self, input):
         variableName = self.getLetter(input, 1, True)
         variableValue = self.getLetter(input, 6, False)
 
         if variableName not in self.globalVariables:
             self.globalVariables.append(variableName)
             line = variableName + ' = ' + variableValue
-            if emitLineFlag:
-                self.emitLine(line)
-            else:
-                return line
+            self.emitLine(line)
         else:
             self.abort("Redefinition of variable " + variableName)
 
@@ -66,7 +66,7 @@ class Emitter:
         if self.checkVariableExistance(variableName):
             return variableName + operator + input[6]
 
-    def valuesStatement(self, input, emitLineFlag):
+    def valuesStatement(self, input):
         variableName = self.getLetter(input, 2, True)
 
         if self.checkVariableExistance(variableName):
@@ -74,50 +74,24 @@ class Emitter:
                 line = variableName + ' ' + '= ' + self.alterVariable(input[4])
             else:
                 line = variableName + ' ' + '= ' + input[4]
-            
-            if emitLineFlag:
-                self.emitLine(line)
-            else:
-                return line
 
+            self.emitLine(line)
 
     def untilStatement(self, input):
-        operating1Position = 0 
-        
-        instructions = "    #instructions"
-
-        for positions in range(1, len(input) + 1 ):
-            if isinstance(input[positions], list):
-                if input[positions][0] == 'Values':
-                    instructions = instructions + '\n' + self.identation + self.valuesStatement(input[positions], False) 
-                elif input[positions][0] == 'MoveRight':
-                    instructions = instructions + '\n' + self.identation + self.moveRight()
-                elif input[positions][0] == 'MoveLeft':
-                    instructions = instructions + '\n' + self.identation + self.moveLeft()
-                elif input[positions][0] == 'Stop':
-                    instructions = instructions + '\n' + self.identation + self.stop()
-                else:
-                    instructions = instructions + '\n' + self.identation + input[positions][0] 
-            elif input[positions] == '(' or input[positions] == ')':
-                pass
-            else:
-                operating1Position = positions
-                break
-        
-        variableName = self.getLetter(input, operating1Position, True)
+        variableName = self.getLetter(input, -3, True)
 
         if self.checkVariableExistance(variableName):
-            operatorPosition = operating1Position + 1
-            operating2Position = operating1Position + 2
+            operatorPosition = -2
+            operating2Position = -1
             operator = '!=' if input[operatorPosition ] == '<>' else input[operatorPosition]
-            condition = variableName +  operator + input[operating2Position]
-            self.emitLine('while ' + condition + ':' + '\n' + instructions)
+            condition = variableName + " " + operator + " " + input[operating2Position]
+            self.emitLine('while ' + condition + ':')
+        
+        initialPosition = 1
+        self.checkIntructions(initialPosition, input)
 
     def whileStatement(self, input):
-
-        instructions = "    #instructions"
-
-        if isinstance(input[1], list):
+        if isinstance(input[1], list): #check if it is IsTrue
             pass
         else:
             variableName = self.getLetter(input, 1, True)
@@ -126,36 +100,43 @@ class Emitter:
                 operatorPosition = 2
                 operating2Position = 3
                 operator = '!=' if input[operatorPosition ] == '<>' else input[operatorPosition]
-                condition = variableName +  operator + input[operating2Position]
+                condition = variableName + " " + operator + " " + input[operating2Position]
 
-            for positions in range(4, len(input)):
-                if isinstance(input[positions], list):
-                    if input[positions][0] == 'Values':
-                        instructions = instructions + '\n' + self.identation + self.valuesStatement(input[positions], False)
-                    elif input[positions][0] == 'MoveRight':
-                        instructions = instructions + '\n' + self.identation + self.moveRight()
-                    elif input[positions][0] == 'MoveLeft':
-                        instructions = instructions + '\n' + self.identation + self.moveLeft()
-                    elif input[positions][0] == 'Stop':
-                        instructions = instructions + '\n' + self.identation + self.stop()
-                    else:
-                        instructions = instructions + '\n' + self.identation + input[positions][0] 
-                elif input[positions] == '(' or input[positions] == ')':
-                    pass
-        
-            self.emitLine('while ' + condition + ':' + '\n' + instructions)           
+            self.emitLine('while ' + condition + ':')  
+
+            initialPosition = 4
+            self.checkIntructions(initialPosition, input)
+
+    def checkIntructions(self, initialPosition, input):
+        for positions in range(initialPosition, len(input)):
+            if isinstance(input[positions], list):
+                self.emitIdentation()
+                if input[positions][0] == 'Values':
+                    self.valuesStatement(input[positions]) 
+                elif input[positions][0] == 'MoveRight':
+                    self.moveRight()
+                elif input[positions][0] == 'MoveLeft':
+                    self.moveLeft()
+                elif input[positions][0] == 'Stop':
+                    self.stop()
+                else:
+                    input[positions][0] 
+            elif input[positions] == '(' or input[positions] == ')':
+                pass
+            else:
+                break
 
     def moveRight(self):
-        #self.emitLine("# MoveRight")
-        return "# MoveRight"
+        self.emitLine("# MoveRight")
+        #return "# MoveRight"
 
     def moveLeft(self):
-        #self.emitLine("# MoveLeft")
-        return "# MoveLeft"
+        self.emitLine("# MoveLeft")
+        #return "# MoveLeft"
 
     def stop(self):
-        #self.emitLine("# Stop")
-        return "# Stop"
+        self.emitLine("# Stop")
+        #return "# Stop"
     
     def printCode(self):
         return self.code

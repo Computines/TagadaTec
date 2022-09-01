@@ -9,9 +9,9 @@ def main():
     whiles =  ['While', '@variable1', '==', '5' , '(', ['Values', '(', '@variable1', ',', ['Alter', '(', '@variable2', ',', 'SUB', ',', '3', ')'], ')'],')',]
     emitter = Emitter("primerStatement.py")
 
-    emitter.newVariable(new, True)
-    emitter.newVariable(new2, True)
-    emitter.valuesStatement(values, True)
+    emitter.newVariable(new)
+    emitter.newVariable(new2)
+    emitter.valuesStatement(values)
     emitter.untilStatement(until)
     emitter.whileStatement(whiles)
     emitter.writeFile()
