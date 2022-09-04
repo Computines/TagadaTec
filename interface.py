@@ -242,6 +242,7 @@ class Interface:
                 openedFile["text"]=filename.split('/')[-1]+" - TagaPlate"
                 file=open(filename,"r+")
                 readFile(file)
+                newCodeLine(1)
         
         def saveChanges():
             try:
@@ -269,6 +270,7 @@ class Interface:
                 openedFile["text"]=folderTree.item(item,"text")+" - TagaPlate"
                 file=open(filename,"r+")
                 readFile(file)
+                newCodeLine(1)
             except:
                 codingArea.insert(END,"Error al abrir archivo")
 
