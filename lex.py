@@ -131,6 +131,7 @@ class Lexer:
             tokenText = self.curChar
             keyValue = tokenText
 
+
         try:
            # print(tokenText)
             controller = posibleTokens.get(keyValue) 

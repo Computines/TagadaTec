@@ -1,11 +1,14 @@
 import sys
+from tabnanny import check
 from turtle import pos
+from urllib.parse import ParseResultBytes
 
 # ['New', '@variable', ',', '(', 'Num', ',', '5', ')']
 # ['Alter', '(', '@variable1', ',', 'SUB', ',', '3', ')']
 # ['Values', '(', '@variable2', ',', '51', ')']
 # ['Until', '(', '[MoveRight]', ')', '@variable3', operador, '@variable4' ]
 # ['Case', '@mellamocarlos', 'When', '1', 'Then', '(', 'MoveRight', 'MoveLeft', 'MoveLeft', ')', 'When', '2', 'Then', '(', 'MoveLeft', ')']
+# ['Case', 'When', '(', '@varible1', '>=', '5', ')', 'Then', '(', ['MoveRight'], ')', 'Else', '(', ['MoveLeft'], ')']
 
 class Emitter:
 
@@ -16,6 +19,7 @@ class Emitter:
         self.nextToken = None
         self.localVariables = []
         self.globalVariables = []
+        self.identation = 0
 
     def abort(self, message):
         sys.exit("Error. " + message)
@@ -24,15 +28,15 @@ class Emitter:
         self.code += line + '\n'
 
     def emitIdentation(self):
-        self.code += "    "
+        self.code += "    " * self.identation
 
     def writeFile(self):
         with open(self.path, 'w') as file:
             file.write(self.code)
 
     def newVariable (self, input):
-        variableName = self.getLetter(input, 1, True)
-        variableValue = self.getLetter(input, 6, False)
+        variableName = self.getVariableName(input, 1, True)
+        variableValue = input[6]
 
         if variableName not in self.globalVariables:
             self.globalVariables.append(variableName)
@@ -46,10 +50,15 @@ class Emitter:
             self.abort("Not declared " + variableName)
         return True
 
-    def getLetter(self, input, position, isVariable):
-        if isVariable :
+    def getVariableName(self, input, position, inNewVariable):
+        if inNewVariable :
             return input[position][1:]
-        return input[position]
+        else:
+            variableName = input[position][1:]
+            if self.checkVariableExistance(variableName):
+                return variableName
+            else:
+                self.abort("Variable does not exist")
 
     def alterVariable(self, input):
         operators = {
@@ -59,14 +68,14 @@ class Emitter:
             'DIV' : '/'
         }
 
-        variableName = self.getLetter(input, 2, True)
+        variableName = self.getVariableName(input, 2, False)
         operator = operators.get(input[4])
 
         if self.checkVariableExistance(variableName):
             return variableName + operator + input[6]
 
     def valuesStatement(self, input):
-        variableName = self.getLetter(input, 2, True)
+        variableName = self.getVariableName(input, 2, False)
 
         if self.checkVariableExistance(variableName):
             if isinstance(input[4], list):
@@ -77,33 +86,28 @@ class Emitter:
             self.emitLine(line)
 
     def untilStatement(self, input):
-        variableName = self.getLetter(input, -3, True)
-
-        if self.checkVariableExistance(variableName):
-            operatorPosition = -2
-            operating2Position = -1
-            operator = '!=' if input[operatorPosition ] == '<>' else input[operatorPosition]
-            condition = variableName + " " + operator + " " + input[operating2Position]
-            self.emitLine('while ' + condition + ':')
-        
         initialPosition = 1
+        self.identation -= 1
         self.checkIntructions(initialPosition, input)
+        self.identation = 0
+        condition = self.getCondition(-3, -2, -1, input)
+        self.emitLine('while ' + condition + ':')
+        self.checkIntructions(initialPosition, input)
+        
 
     def whileStatement(self, input):
         if isinstance(input[1], list): #check if it is IsTrue
-            pass
+            if input[1][0] == 'IsTrue':
+                condition = self.isTrue(input[1])
+                self.emitLine('while ' + condition + ':')  
+                initialPosition = 2
+                self.checkIntructions(initialPosition, input)
+
         else:
-            variableName = self.getLetter(input, 1, True)
-
-            if self.checkVariableExistance(variableName):
-                operatorPosition = 2
-                operating2Position = 3
-                operator = '!=' if input[operatorPosition ] == '<>' else input[operatorPosition]
-                condition = variableName + " " + operator + " " + input[operating2Position]
-
+            condition = self.getCondition(1,2,3,input)
             self.emitLine('while ' + condition + ':')  
-
             initialPosition = 4
+
             self.checkIntructions(initialPosition, input)
 
     def checkIntructions(self, initialPosition, input):
@@ -118,13 +122,82 @@ class Emitter:
                     self.moveLeft()
                 elif input[positions][0] == 'Stop':
                     self.stop()
-                else:
-                    input[positions][0] 
-            elif input[positions] == '(' or input[positions] == ')':
-                pass
+                elif input[positions][0] == 'While':
+                    self.whileStatement(input[positions])
+                elif input[positions][0] == 'Until':
+                    self.untilStatement(input[positions])
+            elif input[positions] == '(':
+                self.identation += 1
+            elif input[positions] == ')':
+                self.identation -= 1
             else:
-                break
+                return positions
     
+    def isTrue(self, input):
+        variableName = self.getVariableName(input, 2, False)
+        return variableName
+
+#['AlterB', '(', '@var', ')']
+    def alterB(self, input):
+        variableName = self.getVariableName(input, 2, False)
+        self.emitLine(variableName + ' = ' + 'not ' + variableName)
+
+    def printValues(self, input):
+        pass
+
+    def getCondition(self, positionVarible1, positionOperator, positionVarible2, input):
+        if input[positionVarible1][0] == '@':
+            variableName1 = self.getVariableName(input, positionVarible1, False)
+        else:
+            variableName1 = input[positionVarible1]
+            
+        if input[positionVarible2][0] == '@':
+            variableName2 = self.getVariableName(input, positionVarible2, False)
+        else:
+            variableName2 = input[positionVarible2]
+
+        operator = '!=' if input[positionOperator ] == '<>' else input[positionOperator]
+        condition = variableName1 + " " + operator + " " + variableName2
+
+        return condition
+
+    def caseWhen(self, input):
+        if isinstance(input[2], list):
+            self.emitLine("if " + self.isTrue(input[2]) + ":")
+            currentPos = 3
+        else:
+            condition = self.getCondition(3, 4, 5, input)
+            self.emitLine("if " + condition + ":")
+            currentPos = 7
+
+        currentPos = self.checkIntructions(currentPos + 1, input)
+        if currentPos < len(input):
+            self.emitLine("else:")
+            self.checkIntructions(currentPos + 1, input)
+
+#['Case', '@mellamocarlos', 'When', '1', 'Then', '(', ['MoveRight'], ['MoveLeft'], ')', 'When', '2', 'Then', '(', ['MoveLeft'], ')']
+    def caseSwitch(self, input):
+        variableName = self.getVariableName(input, 1, False)
+        self.emitLine("if "+ variableName + " == " + input[3]+ ":")
+        currentPosition = self.checkIntructions(5, input)
+        while currentPosition <= len(input):
+            if input[currentPosition] == 'Else':
+                self.emitLine("else:")
+                self.checkIntructions(currentPosition + 1, input)
+                break
+
+            self.emitLine("elif " + variableName + " == " + input[currentPosition + 1] + ":")
+            currentPosition += 3
+            currentPosition = self.checkIntructions(currentPosition, input)
+               
+    def hammer(self):
+        self.emitLine("# Hammer")
+        # agregar la position 
+        pass
+
+    def stop(self):
+        self.emitLine("# Stop")
+        pass
 
     def moveRight(self):
         self.emitLine("# MoveRight")
