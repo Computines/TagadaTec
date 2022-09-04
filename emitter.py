@@ -16,7 +16,6 @@ class Emitter:
         self.nextToken = None
         self.localVariables = []
         self.globalVariables = []
-        self.identation = "    "
 
     def abort(self, message):
         sys.exit("Error. " + message)
@@ -125,6 +124,7 @@ class Emitter:
                 pass
             else:
                 break
+    
 
     def moveRight(self):
         self.emitLine("# MoveRight")
