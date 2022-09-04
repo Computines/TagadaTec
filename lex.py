@@ -90,8 +90,8 @@ class Lexer:
             'Bool' : TokenController.bool,
             '(' : TokenController.initial_parenthesis,
             ')' : TokenController.final_parenthesis,
-            'True' : TokenController.true,
-            'False' : TokenController.false,
+            'true' : TokenController.true,
+            'false' : TokenController.false,
             'Proc' : TokenController.proc,
             'CALL' : TokenController.call,
             'N' : TokenController.n,
@@ -117,6 +117,7 @@ class Lexer:
                     keyValue = '@'
             else:
                 keyValue = tokenText
+                # print(keyValue)
         elif self.curChar.isdigit():
             tokenText = self.checkNumbers() 
             keyValue = 'Number'

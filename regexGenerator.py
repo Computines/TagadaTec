@@ -1,7 +1,7 @@
 from tokenController import TokenType, Token
 import regex as rex
 
-informalRegex = 'New VARIABLE_NAME COMMA INITIAL_PARENTESIS [Num|Bool] COMMA [Number|True|False|Alter] FINAL_PARENTESIS'
+informalRegex = 'New VARIABLE_NAME COMMA INITIAL_PARENTESIS [Num|Bool] COMMA [Number|true|false|Alter] FINAL_PARENTESIS'
 
 def regexGenerator(informalRegex):
     listTokens = informalRegex.split(" ")

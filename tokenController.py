@@ -159,11 +159,11 @@ class TokenController:
 
     @staticmethod
     def true(tokenText):
-        return Token(tokenText, TokenType.True_k)
+        return Token(tokenText, TokenType.true)
 
     @staticmethod
     def false(tokenText):
-        return Token(tokenText, TokenType.False_k)
+        return Token(tokenText, TokenType.false)
 
     @staticmethod
     def principal(tokenText):
@@ -238,8 +238,8 @@ class TokenType(enum.Enum):
     INITIAL_PARENTESIS = 213
     FINAL_PARENTESIS = 214
     COMMA = 215
-    True_k = 216
-    False_k = 217
+    true = 216
+    false = 217
     Num = 218
     Bool = 219
     When = 220
@@ -264,7 +264,7 @@ class Token:
             # identifies keywords or operator
             if kind.name == tokenText and kind.value >= margin :
                 return kind
-            elif kind.name == tokenText+'_k': #check for true and false 
+            elif kind.name == tokenText: #check for true and false 
                 return kind
         return None
 

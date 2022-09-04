@@ -1,6 +1,6 @@
 from os import abort
 import sys
-from tokenController import TokenType
+from tokenController import TokenType, Token
 from lex import *
 # from statementAnalizer import StatementAnalizer
 
@@ -12,6 +12,8 @@ class Parser:
         self.symbols = set()    # Variables declared so far.
         self.labelsDeclared = set() # Labels declared so far.
         self.labelsGotoed = set() # Labels goto'ed so far.
+
+        self.variables = {}
 
         self.curToken = None
         self.peekToken = None
@@ -53,7 +55,7 @@ class Parser:
                 self.analizeProc()
                 self.nextToken()
             elif Token.checkIfKeyword(self.curToken.text):
-                print(self.statement())
+                self.controlVariables(self.statement(), "noProc")
                 self.nextToken()
             elif self.checkToken(TokenType.EOF):
                 print("complied completed")
@@ -61,8 +63,52 @@ class Parser:
             else:
                 self.abort("Sintax error: Statement not initialize by keyword")
 
+    def controlVariables(self, statement: list, procName: str):
+        if statement[0].kind == TokenType.New:
+            if (statement[4].text == "Bool" and (statement[6].kind == TokenType.true or statement[6].kind == TokenType.false)) or \
+                statement[4].text == "Num" and statement[6].text.isdigit():
+                self.variables[statement[1].text] = (procName, statement[4].text)
+            else:
+                self.abort("Data type does not match with initialize type")
+        elif statement[0].kind == TokenType.Values:
+            for variable in self.variables.items():
+                if variable[0] == statement[2].text:
+                    if isinstance(statement[4], list) and variable[1][1] == "Num":
+                        self.controlVariables(statement[4], procName)
+                        break
+                    elif statement[4].kind == TokenType.Number and variable[1][1] == "Num":
+                        break
+                    elif (statement[4].kind == TokenType.true or statement[4].kind == TokenType.false) and variable[1][1] == "Bool":
+                        break
+                    else:
+                        self.abort("Data type does not match with variable's type")
+            else:
+                self.abort(f"Variable {statement[2].text} not initialized")
+        elif statement[0].kind == TokenType.Alter:
+            for variable in self.variables.items():
+                if variable[0] == statement[2].text:
+                    if variable[1][1] == "Num":
+                        break
+                    else:
+                        self.abort("Data type does not match with variable's type")
+            else:
+                self.abort(f"Variable {statement[2].text} not initialized")
+        elif statement[0].kind == TokenType.AlterB:
+            for variable in self.variables.items():
+                if variable[0] == statement[2].text:
+                    if variable[1][1] == "Bool":
+                        break
+                    else:
+                        self.abort("Data type does not match with variable's type")
+            else:
+                self.abort(f"Variable {statement[2].text} not initialized")
+
     def analizeProc(self):
-        procName = ""
+        self.nextToken() # Skip Proc Token
+        procName = self.curToken.text # Save the Proc Name
+        self.nextToken() # Skip name token
+        self.nextToken() # Skip ( Token
+        
         while self.curToken.text != ';':
             if self.checkToken(TokenType.Proc):
                 self.abort("Sintax error: Proc into a proc")
@@ -70,7 +116,7 @@ class Parser:
                 procName = self.curToken.text
                 self.nextToken()
             elif Token.checkIfKeyword(self.curToken.text):
-                print(self.statement())
+                self.controlVariables(self.statement(), procName)
                 self.nextToken()
             elif self.curToken.text == "\n":
                 self.nextToken()
@@ -88,11 +134,11 @@ class Parser:
         tokenList = []
 
         if self.checkToken(TokenType.Alter) or self.checkToken(TokenType.IsTrue):
-            tokenList.append(self.curToken.text)
+            tokenList.append(self.curToken)
             while self.peekToken.text != ')':
                 self.nextToken()
-                tokenList.append(self.curToken.text)
-            tokenList.append(self.peekToken.text)
+                tokenList.append(self.curToken)
+            tokenList.append(self.peekToken)
             return tokenList
 
         while self.curToken.text != ';':
@@ -103,7 +149,7 @@ class Parser:
             elif self.checkToken(TokenType.EOF):
                 self.abort("Sintax Error: Statement never finalize")
             elif self.curToken.text != "\n" and self.curToken.text != ";":
-                tokenList.append(self.curToken.text)
+                tokenList.append(self.curToken)
             self.nextToken()
 
         return tokenList
