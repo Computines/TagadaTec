@@ -1,6 +1,6 @@
 
 from lex import *
-from parser import *
+from parserTokens import Parser
 
 # def main():
 # 	input = "==<="
@@ -15,12 +15,12 @@ def main():
     # input = "Case @mellamocarlos \n When 1 Then \n ( MoveRight;\n MoveLeft;\n ) \n When 2 Then \n ( MoveLeft;\n );"
     input = "Case When (@varible1 >= 5) Then (MoveRight;\n) Else (MoveLeft;\n);"
     lexer = Lexer(input)
-    parser = Parser(lexer)
-    #token = lexer.getToken()
-    parser.program()
+    #parser = Parser(lexer)
+    token = lexer.getToken()
+    #parser.program()
 
-    #while token.kind != TokenType.EOF:
-    #    print(token.kind)   
-    #    token = lexer.getToken()
+    while token.kind != TokenType.EOF:
+        print(token.kind)   
+        token = lexer.getToken()
 
 main()

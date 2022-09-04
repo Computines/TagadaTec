@@ -1,11 +1,15 @@
 from asyncio import events
 from asyncio.windows_events import NULL
 from distutils.cmd import Command
+from distutils.command.build import build
+from distutils.command.build_scripts import first_line_re
 from tkinter import *
 from tkinter import ttk
 import os
 import tkinter.font as tkfont
 from tkinter import filedialog
+from lex import *
+from parserTokens import Parser
 
 fnt=("Arial",10)
 filename = ""
@@ -338,6 +342,9 @@ class Interface:
         yscrollCode.config(command=multipleyView)
 
         def newCodeLine(event):
+            cleanErrors()
+            cleanLines()
+            colorCode()
             numbArea.config(state=NORMAL)
             currentLine = int(codingArea.index('end-1c').split('.')[0])
             numbArea.delete('1.0', END)
@@ -350,6 +357,108 @@ class Interface:
         
 
         codingArea.bind("<KeyRelease>", newCodeLine)
+
+        def newConsoleLine(text):
+            consoleArea.config(state=NORMAL)
+            consoleArea.insert(END,text+"\n")
+            consoleArea.config(state=DISABLED)
+
+        def errorLine(error):
+            index1 = str(float(str(error).split(" ")[4]))
+            index2 = str(float(str(error).split(" ")[4])+1)
+            codingArea.tag_remove("error", "1.0", END)
+            codingArea.tag_remove("error", "1.0", END)
+            codingArea.tag_add("error", index1, index2)
+            codingArea.tag_config("error",
+                foreground="#f14c4c",
+                underline=True)
+            numbArea.tag_add("error", index1, index2)
+            numbArea.tag_config("error",
+                background="#7d2828",
+                foreground="white")
+
+        def cleanErrors():
+            codingArea.tag_remove("error", "1.0", END)
+            codingArea.tag_remove("error", "1.0", END)
+            numbArea.tag_add("error", '1.0', END)
+            codingArea.tag_config("error",
+                foreground="white")
+            numbArea.tag_add("error", '1.0', END)
+            numbArea.tag_config("error",
+                background=BACKGROUND,
+                foreground=LIGHTERBG)
+        
+        def cleanLines():
+            for tag in codingArea.tag_names():
+                codingArea.tag_remove(tag, "1.0", "end")
+
+        def getColor(kind):
+            if kind == 1:
+                return "#43c9b0"
+            elif kind == 2:
+                return "#67cefe"
+            elif kind == 3:
+                return "#cb5923"
+            elif kind>100 and kind<200:
+                return "#c586c0"
+            elif kind>200 and kind<216:
+                return "#dcdcaa"
+            elif kind>216 and kind<300:
+                return "#499bd6"
+            elif kind>300 and kind<400:
+                return "#499bd6"
+            else:
+                return "white" 
+
+        def lexTheToken(token, firstLine, firstChar, i, j, n):
+            try:
+                if token!="":
+                    lexerVerif = Lexer(token)
+                    lexedToken = lexerVerif.getToken()
+                    kind = lexedToken.kind.value
+                    color=getColor(kind)
+                    codingArea.tag_add(str(n), str(firstLine)+"."+str(firstChar), str(i)+"."+str(j))
+                    codingArea.tag_config(str(n),
+                        foreground=color)
+            except Exception as e:
+                pass
+
+        def colorCode():
+            firstLine=0
+            firstChar=0
+            n=0
+            i=1
+            j=0
+            token=""
+            while i<=int(codingArea.index('end-1c').split('.')[0]):
+                while j<len(codingArea.get(str(i)+".0", 'end-1c')):
+                    if firstLine == 0 and firstChar == 0:
+                        firstLine=i
+                        firstChar=j;
+                    char = codingArea.get(str(i)+"."+str(j), str(i)+"."+str(j+1))
+                    if char == " " or char == "\n" or  char == "\t" or char == "\r" or char == ";":
+                        lexTheToken(token, firstLine, firstChar, i, j, n)
+                        token=""
+                        firstLine=0
+                        firstChar=0
+                    elif char == "(" or char == ")":
+                        lexTheToken(token, firstLine, firstChar, i, j, n)
+                        n+=1
+                        token=""
+                        codingArea.tag_add(str(n), str(i)+"."+str(j), str(i)+"."+str(j+1))
+                        codingArea.tag_config(str(n),
+                            foreground="#c586c0")
+                        firstLine=0
+                        firstChar=0
+                    else:
+                        token+=char
+                    
+                    j+=1
+                    n+=1
+                i+=1
+                n+=1
+                j=0
+
 
         ########################## CONSOLA ###########################
 
@@ -370,11 +479,26 @@ class Interface:
         font = tkfont.Font(font=consoleArea['font'])
         tab_size = font.measure('    ')
         consoleArea.config(tabs=tab_size)
-        consoleArea.insert(END,os.getcwd())
+        consoleArea.insert(END,os.getcwd()+"\n")
         consoleArea.config(state=DISABLED)
 
         xscrollConsole.config(command=consoleArea.xview)
         yscrollConsole.config(command=consoleArea.yview)
+
+        ########################## PROGRAMA ###########################
+        def buildFile(e):
+            try:
+                lexer = Lexer(codingArea.get('1.0', END))
+                parser = Parser(lexer)
+                parser.program() 
+                newConsoleLine("Complilation Completed")
+            except Exception as e:
+                errorLine(e)
+                newConsoleLine(str(e))
+                
+                   
+
+        buildButton.bind('<Button-1>',buildFile)
 
         #self.ventana.protocol("WM_DELETE_WINDOW",1) 
         self.ventana.mainloop()
