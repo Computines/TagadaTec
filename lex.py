@@ -65,7 +65,8 @@ class Lexer:
             '\0' : TokenController.eof,
             ';' : TokenController.semiColon,
             ',' : TokenController.comma,
-            'variable' : TokenController.variable,
+            '@' : TokenController.variable,
+            '@Principal' : TokenController.principal,
             'New' : TokenController.new,
             'Values' : TokenController.values,
             'Alter' : TokenController.alter,            
@@ -90,7 +91,13 @@ class Lexer:
             '(' : TokenController.initial_parenthesis,
             ')' : TokenController.final_parenthesis,
             'True' : TokenController.true,
-            'False' : TokenController.false
+            'False' : TokenController.false,
+            'Proc' : TokenController.proc,
+            'CALL' : TokenController.call,
+            'N' : TokenController.n,
+            'S' : TokenController.s,
+            'E' : TokenController.e,
+            'O' : TokenController.o    
         } 
 
         tokenText = self.curChar
@@ -104,7 +111,10 @@ class Lexer:
             initial = self.curChar 
             tokenText = self.keyWordsOrIdentifiers()
             if initial == '@':
-                keyValue = 'variable'
+                if tokenText == '@Principal':
+                    keyValue = '@Principal'
+                else:
+                    keyValue = '@'
             else:
                 keyValue = tokenText
         elif self.curChar.isdigit():
@@ -122,11 +132,11 @@ class Lexer:
             keyValue = tokenText
 
         try:
-            print(tokenText)
+           # print(tokenText)
             controller = posibleTokens.get(keyValue) 
             token = controller(tokenText) 
         except:
-            self.abort("Unknown token: " + self.curChar)
+            self.abort("Unknown token: " + keyValue)
 
         self.nextChar()
         return token
@@ -148,7 +158,7 @@ class Lexer:
             self.nextChar()
 
         tokenText = self.source[startPos:self.curPos+1]
-        keyword = Token.checkTokenType(tokenText)
+        keyword = Token.checkTokenType(tokenText) and Token.checkTokenType(tokenText).name
         
         if keyword == None: # it is a variable 
             return tokenText

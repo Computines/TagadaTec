@@ -157,12 +157,52 @@ class TokenController:
     def final_parenthesis(tokenText):
         return Token(tokenText, TokenType.FINAL_PARENTESIS)
 
+    @staticmethod
+    def true(tokenText):
+        return Token(tokenText, TokenType.True_k)
+
+    @staticmethod
+    def false(tokenText):
+        return Token(tokenText, TokenType.False_k)
+
+    @staticmethod
+    def principal(tokenText):
+        return Token(tokenText, TokenType.Principal)
+
+    @staticmethod
+    def call(tokenText):
+        return Token(tokenText, TokenType.CALL)
+
+    @staticmethod
+    def proc(tokenText):
+        return Token(tokenText, TokenType.Proc)
+
+    @staticmethod
+    def e(tokenText):
+        return Token(tokenText, TokenType.E)
+
+    @staticmethod
+    def o(tokenText):
+        return Token(tokenText, TokenType.O)
+
+    @staticmethod
+    def s(tokenText):
+        return Token(tokenText, TokenType.S)
+
+    @staticmethod
+    def n(tokenText):
+        return Token(tokenText, TokenType.N)
+
+    @staticmethod
+    def Break(tokenText):
+        return Token(tokenText, TokenType.Break)
+
 class TokenType(enum.Enum):
     EOF = -1
     NEWLINE = 0
     Number = 1
-    VARIABLE_NAME = 3
-    STRING = 4
+    VARIABLE_NAME = 2
+    STRING = 3
 	# Keywords.
     New = 101
     Values = 102
@@ -170,21 +210,18 @@ class TokenType(enum.Enum):
     AlterB = 104
     MoveRight = 105
     MoveLeft = 106
-    Then = 107
-    Else = 108
-    While = 109
-    When = 110
-    Case = 111
-    Hammer = 112
-    Stop = 113
-    IsTrue = 114
-    Repeat = 115
-    Until = 116
-    PrintValues = 115
-    True_k = 116
-    False_k = 117
-    Num = 118
-    Bool = 119
+    While = 107
+    Case = 108
+    Hammer = 109
+    Stop = 110
+    IsTrue = 111
+    Repeat = 112
+    Until = 113
+    PrintValues = 114
+    Proc = 115
+    CALL = 116
+    Principal = 117
+    Break = 118
 	# Operators.
     EQUAL = 201  
     ADD = 202
@@ -201,6 +238,13 @@ class TokenType(enum.Enum):
     INITIAL_PARENTESIS = 213
     FINAL_PARENTESIS = 214
     COMMA = 215
+    True_k = 216
+    False_k = 217
+    Num = 218
+    Bool = 219
+    When = 220
+    Then = 221
+    Else = 222
     #positions
     N = 301
     S = 302
@@ -215,11 +259,19 @@ class Token:
         self.kind = tokenKind   # The TokenType that this token is classified as.
         
     @staticmethod
-    def checkTokenType(tokenText):
+    def checkTokenType(tokenText, margin = 100):
         for kind in TokenType:
             # identifies keywords or operator
-            if kind.name == tokenText and kind.value >= 100 :
-                return kind.name
+            if kind.name == tokenText and kind.value >= margin :
+                return kind
             elif kind.name == tokenText+'_k': #check for true and false 
-                return tokenText
+                return kind
         return None
+
+    @staticmethod
+    def checkIfKeyword(tokenText):
+        for kind in TokenType:
+            # identifies keywords or operator
+            if kind.name == tokenText and kind.value >= 100 and kind.value < 200 :
+                return True
+        return False
