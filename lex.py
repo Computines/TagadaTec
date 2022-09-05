@@ -114,7 +114,10 @@ class Lexer:
                 if tokenText == '@Principal':
                     keyValue = '@Principal'
                 else:
-                    keyValue = '@'
+                    if len(tokenText) >= 4 and len(tokenText) <= 11:
+                        keyValue = '@'
+                    else:
+                        self.abort("Varible name is not accepted")
             else:
                 keyValue = tokenText
         elif self.curChar.isdigit():

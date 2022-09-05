@@ -38,5 +38,5 @@ while variableBool:
     variable1 = variable2-3
 variableBool = not variableBool
 while True:
-    meSientoFeliz = 1
+    meSie ntoFeliz = 1
     break
