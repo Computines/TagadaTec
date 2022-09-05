@@ -34,6 +34,11 @@ class Emitter:
         with open(self.path, 'w') as file:
             file.write(self.code)
 
+    def commonFuntions(self):
+        self.emitLine("true = True")
+        self.emitLine("false = False")
+        self.emitFuntions()
+
     def newVariable (self, input):
         variableName = self.getVariableName(input, 1, True)
         variableValue = input[6]
@@ -117,11 +122,17 @@ class Emitter:
                 if input[positions][0] == 'Values':
                     self.valuesStatement(input[positions]) 
                 elif input[positions][0] == 'MoveRight':
-                    self.moveRight()
+                    self.emitLine("moveRight()")
+                    #self.moveRight()
                 elif input[positions][0] == 'MoveLeft':
-                    self.moveLeft()
+                    self.emitLine("moveLeft()")
+                    #self.moveLeft()
                 elif input[positions][0] == 'Stop':
-                    self.stop()
+                    self.emitLine("stop()")
+                elif input[positions][0] == 'Hammer':
+                    orientation = input[positions][2]
+                    self.emitLine("hammer("+orientation+")")
+                    #self.stop()
                 elif input[positions][0] == 'While':
                     self.whileStatement(input[positions])
                 elif input[positions][0] == 'Until':
@@ -143,6 +154,9 @@ class Emitter:
         self.emitLine(variableName + ' = ' + 'not ' + variableName)
 
     def printValues(self, input):
+        pass
+
+    def repeat(self, input):
         pass
 
     def getCondition(self, positionVarible1, positionOperator, positionVarible2, input):
@@ -189,26 +203,43 @@ class Emitter:
             self.emitLine("elif " + variableName + " == " + input[currentPosition + 1] + ":")
             currentPosition += 3
             currentPosition = self.checkIntructions(currentPosition, input)
-               
+
+    def emitFuntions(self):
+        functions = {
+            'moveRight' : self.moveRight,
+            'moveLeft' : self.moveLeft,
+            'stop' : self.stop,
+            'hammer' : self.hammer
+            }
+        for function  in functions:
+            self.identation = 1 
+            if function != 'hammer':
+                self.emitLine("def " + function + "():")
+            else:
+                self.emitLine("def " + function + "(orientation):")
+            self.emitIdentation()
+            functions.get(function)()          
+
     def hammer(self):
-        self.emitLine("# Hammer")
+        self.emitLine("pass")
+        self.identation = 0 
+
         # agregar la position 
         pass
 
-    def stop(self):
-        self.emitLine("# Stop")
-        pass
-
     def moveRight(self):
-        self.emitLine("# MoveRight")
+        self.emitLine("pass")
+        self.identation = 0
         #return "# MoveRight"
 
     def moveLeft(self):
-        self.emitLine("# MoveLeft")
+        self.emitLine("pass")
+        self.identation = 0 
         #return "# MoveLeft"
 
     def stop(self):
-        self.emitLine("# Stop")
+        self.emitLine("pass")
+        self.identation = 0
         #return "# Stop"
     
     def printCode(self):

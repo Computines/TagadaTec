@@ -5,7 +5,7 @@ def main():
     new = ['New', '@variable1', ',', '(', 'Num', ',', '2', ')']
     new2 = ['New', '@variable2', ',', '(', 'Num', ',', '1', ')']
     new3 = ['New', '@variable3', ',', '(', 'Num', ',', '1', ')']
-    new4 = ['New', '@variableBool', ',', '(', 'Bool', ',', 'True', ')']
+    new4 = ['New', '@variableBool', ',', '(', 'Bool', ',', 'true', ')']
     new5 = ['New', '@mellamocarlos', ',', '(', 'Num', ',', '1', ')']
     values = ['Values', '(', '@variable1', ',', ['Alter', '(', '@variable2', ',', 'SUB', ',', '3', ')'], ')']
     until =  ['Until', '(', ['MoveRight'], ['While', '@variable1', '==', '5' , '(', ['Values', '(', '@variable1', ',', ['Alter', '(', '@variable2', ',', 'SUB', ',', '3', ')'], ')'],')',],')', '@variable1', '>=', '5' ]
@@ -16,7 +16,7 @@ def main():
     alterB = ['AlterB', '(', '@variableBool', ')']
 
     emitter = Emitter("primerStatement2.py")
-
+    emitter.commonFuntions()
     emitter.newVariable(new)
     emitter.newVariable(new2)
     emitter.newVariable(new3)

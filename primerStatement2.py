@@ -1,37 +1,39 @@
+true = True
+false = False
+def moveRight():
+    pass
+def moveLeft():
+    pass
+def stop():
+    pass
+def hammer(orientation):
+    pass
 variable1 = 2
 variable2 = 1
 variable3 = 1
-variableBool = True
+variableBool = true
 mellamocarlos = 1
 variable1 = variable2-3
-# MoveRight
+moveRight()
 while variable1 == 5:
     variable1 = variable2-3
 while variable1 >= 5:
-    # MoveRight
-    pass
+    moveRight()
     while variable1 == 5:
         variable1 = variable2-3
 if mellamocarlos == 1:
-    # MoveRight
-    # MoveLeft
-    pass
+    moveRight()
+    moveLeft()
 elif mellamocarlos == 2:
-    # MoveLeft
-    pass
+    moveLeft()
 else:
-    # MoveRight
-    pass
+    moveRight()
 while variable1 == 5:
     variable1 = variable2-3
 if variableBool:
-    # MoveRight
-    pass
+    moveRight()
 else:
-    # MoveLeft
-    pass
+    moveLeft()
 while variableBool:
     variable1 = variable2-3
-    break
 variableBool = not variableBool
-print(variableBool)
