@@ -20,6 +20,7 @@ class Emitter:
         self.localVariables = []
         self.globalVariables = []
         self.identation = 0
+        self.commonFuntions()
 
     def abort(self, message):
         sys.exit("Error. " + message)
@@ -38,6 +39,37 @@ class Emitter:
         self.emitLine("true = True")
         self.emitLine("false = False")
         self.emitFuntions()
+
+    def emitStatement(self, input):
+        for position in range( len(input)):
+            if input[position] == 'Values':
+                self.valuesStatement(input) 
+            elif input[position] == 'MoveRight':
+                self.emitLine("moveRight()")
+            elif input[position] == 'MoveLeft':
+                self.emitLine("moveLeft()")
+            elif input[position] == 'Stop':
+                self.emitLine("stop()")
+            elif input[position] == 'Hammer':
+                orientation = input[position][2]
+                self.emitLine("hammer("+orientation+")")
+            elif input[position] == 'While':
+                self.whileStatement(input)
+            elif input[position] == 'Until':
+                self.untilStatement(input)
+            elif input[position] == 'New':
+                self.newVariable(input)
+            elif input[position] == 'Repeat':
+                self.repeat(input)
+            elif input[position] == 'Case':
+                if input[position + 1] == 'When':
+                    self.caseWhen(input)
+                else:
+                    self.caseSwitch(input)
+            elif input[position] == 'PrintValues':
+                self.printValues(input)
+            elif input[position] == "AlterB":
+                self.alterB(input)
 
     def newVariable (self, input):
         variableName = self.getVariableName(input, 1, True)
@@ -90,6 +122,19 @@ class Emitter:
 
             self.emitLine(line)
 
+    def isTrue(self, input):
+        variableName = self.getVariableName(input, 2, False)
+        return variableName
+
+#['AlterB', '(', '@var', ')']
+    def alterB(self, input):
+        variableName = self.getVariableName(input, 2, False)
+        self.emitLine(variableName + ' = ' + 'not ' + variableName)
+
+#['PrintValues', '(', '"Hola"', 'variable1',')']
+    def printValues(self, input):
+        self.emitLine("# print()")
+
     def untilStatement(self, input):
         initialPosition = 1
         self.identation -= 1
@@ -99,7 +144,6 @@ class Emitter:
         self.emitLine('while ' + condition + ':')
         self.checkIntructions(initialPosition, input)
         
-
     def whileStatement(self, input):
         if isinstance(input[1], list): #check if it is IsTrue
             if input[1][0] == 'IsTrue':
@@ -115,65 +159,9 @@ class Emitter:
 
             self.checkIntructions(initialPosition, input)
 
-    def checkIntructions(self, initialPosition, input):
-        for positions in range(initialPosition, len(input)):
-            if isinstance(input[positions], list):
-                self.emitIdentation()
-                if input[positions][0] == 'Values':
-                    self.valuesStatement(input[positions]) 
-                elif input[positions][0] == 'MoveRight':
-                    self.emitLine("moveRight()")
-                    #self.moveRight()
-                elif input[positions][0] == 'MoveLeft':
-                    self.emitLine("moveLeft()")
-                    #self.moveLeft()
-                elif input[positions][0] == 'Stop':
-                    self.emitLine("stop()")
-                elif input[positions][0] == 'Hammer':
-                    orientation = input[positions][2]
-                    self.emitLine("hammer("+orientation+")")
-                    #self.stop()
-                elif input[positions][0] == 'While':
-                    self.whileStatement(input[positions])
-                elif input[positions][0] == 'Until':
-                    self.untilStatement(input[positions])
-            elif input[positions] == '(':
-                self.identation += 1
-            elif input[positions] == ')':
-                self.identation -= 1
-            else:
-                return positions
-    
-    def isTrue(self, input):
-        variableName = self.getVariableName(input, 2, False)
-        return variableName
-
-#['AlterB', '(', '@var', ')']
-    def alterB(self, input):
-        variableName = self.getVariableName(input, 2, False)
-        self.emitLine(variableName + ' = ' + 'not ' + variableName)
-
-    def printValues(self, input):
-        pass
-
     def repeat(self, input):
-        pass
-
-    def getCondition(self, positionVarible1, positionOperator, positionVarible2, input):
-        if input[positionVarible1][0] == '@':
-            variableName1 = self.getVariableName(input, positionVarible1, False)
-        else:
-            variableName1 = input[positionVarible1]
-            
-        if input[positionVarible2][0] == '@':
-            variableName2 = self.getVariableName(input, positionVarible2, False)
-        else:
-            variableName2 = input[positionVarible2]
-
-        operator = '!=' if input[positionOperator ] == '<>' else input[positionOperator]
-        condition = variableName1 + " " + operator + " " + variableName2
-
-        return condition
+        self.emitLine("while True:")
+        self.checkIntructions(1, input)
 
     def caseWhen(self, input):
         if isinstance(input[2], list):
@@ -204,6 +192,62 @@ class Emitter:
             currentPosition += 3
             currentPosition = self.checkIntructions(currentPosition, input)
 
+    def getCondition(self, positionVarible1, positionOperator, positionVarible2, input):
+        if input[positionVarible1][0] == '@':
+            variableName1 = self.getVariableName(input, positionVarible1, False)
+        else:
+            variableName1 = input[positionVarible1]
+            
+        if input[positionVarible2][0] == '@':
+            variableName2 = self.getVariableName(input, positionVarible2, False)
+        else:
+            variableName2 = input[positionVarible2]
+
+        operator = '!=' if input[positionOperator ] == '<>' else input[positionOperator]
+        condition = variableName1 + " " + operator + " " + variableName2
+
+        return condition
+
+    def checkIntructions(self, initialPosition, input):
+        for position in range(initialPosition, len(input)):
+            if isinstance(input[position], list):
+                self.emitIdentation()
+                if input[position][0] == 'Values':
+                    self.valuesStatement(input[position]) 
+                elif input[position][0] == 'MoveRight':
+                    self.emitLine("moveRight()")
+                elif input[position][0] == 'MoveLeft':
+                    self.emitLine("moveLeft()")
+                elif input[position][0] == 'Stop':
+                    self.emitLine("stop()")
+                elif input[position][0] == 'Hammer':
+                    orientation = input[position][2]
+                    self.emitLine("hammer("+orientation+")")
+                elif input[position][0] == 'While':
+                    self.whileStatement(input[position])
+                elif input[position][0] == 'Until':
+                    self.untilStatement(input[position])
+                elif input[position][0] == 'New':
+                    self.newVariable(input[position])
+                elif input[position][0] == 'Repeat':
+                    self.repeat(input[position])
+                elif input[position][0] == 'Case':
+                    if input[position][1] == 'When':
+                        self.caseWhen(input[position])
+                    else:
+                        self.caseSwitch(input[position])
+                elif input[position][0] == 'PrintValues':
+                    self.printValues(input[position])
+            elif input[position] == '(':
+                self.identation += 1
+            elif input[position] == ')':
+                self.identation -= 1
+            elif input[position] == 'Break':
+                self.emitIdentation()
+                self.emitLine("break")
+            else:
+                return position
+    
     def emitFuntions(self):
         functions = {
             'moveRight' : self.moveRight,
@@ -223,24 +267,19 @@ class Emitter:
     def hammer(self):
         self.emitLine("pass")
         self.identation = 0 
-
-        # agregar la position 
         pass
 
     def moveRight(self):
         self.emitLine("pass")
         self.identation = 0
-        #return "# MoveRight"
 
     def moveLeft(self):
         self.emitLine("pass")
         self.identation = 0 
-        #return "# MoveLeft"
 
     def stop(self):
         self.emitLine("pass")
         self.identation = 0
-        #return "# Stop"
     
     def printCode(self):
         return self.code
