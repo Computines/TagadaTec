@@ -71,16 +71,6 @@ class Emitter:
             elif input[position] == "AlterB":
                 self.alterB(input)
 
-    def newVariable (self, input):
-        variableName = self.getVariableName(input, 1, True)
-        variableValue = input[6]
-
-        if variableName not in self.globalVariables:
-            self.globalVariables.append(variableName)
-            line = variableName + ' = ' + variableValue
-            self.emitLine(line)
-        else:
-            self.abort("Redefinition of variable " + variableName)
 
     def checkVariableExistance(self, variableName):
         if variableName not in self.globalVariables:
@@ -96,6 +86,17 @@ class Emitter:
                 return variableName
             else:
                 self.abort("Variable does not exist")
+
+    def newVariable (self, input):
+        variableName = self.getVariableName(input, 1, True)
+        variableValue = input[6]
+
+        if variableName not in self.globalVariables:
+            self.globalVariables.append(variableName)
+            line = variableName + ' = ' + variableValue
+            self.emitLine(line)
+        else:
+            self.abort("Redefinition of variable " + variableName)
 
     def alterVariable(self, input):
         operators = {
@@ -131,9 +132,15 @@ class Emitter:
         variableName = self.getVariableName(input, 2, False)
         self.emitLine(variableName + ' = ' + 'not ' + variableName)
 
-#['PrintValues', '(', '"Hola"', 'variable1',')']
+#['PrintValues', '(', '"Hola"', ',' , '@variable1',')']
     def printValues(self, input):
-        self.emitLine("# print()")
+        insidePrint = '""'
+        for element in input[2:len(input)-1]:
+            if element[0] == '@':
+                insidePrint = insidePrint + '+'+ "str(" + element[1:] + ")" + '+'+ '" "'
+            elif element[0] == '\"':
+                insidePrint = insidePrint + '+' + element + '+' +'" "' 
+        self.emitLine("print(" + insidePrint + ")")
 
     def untilStatement(self, input):
         initialPosition = 1

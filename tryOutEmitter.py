@@ -13,11 +13,12 @@ def main():
     values = ['Values', '(', '@variable1', ',', ['Alter', '(', '@variable2', ',', 'SUB', ',', '3', ')'], ')']
     until =  ['Until', '(', ['MoveRight'], ['While', '@variable1', '==', '5' , '(', ['Values', '(', '@variable1', ',', ['Alter', '(', '@variable2', ',', 'SUB', ',', '3', ')'], ')'],')',],')', '@variable1', '>=', '5' ]
     whiles =  ['While', '@variable1', '==', '5' , '(', ['Values', '(', '@variable1', ',', ['Alter', '(', '@variable2', ',', 'SUB', ',', '3', ')'], ')'],')',]
-    whilesTrue =  ['While', ['IsTrue', '(', '@variableBool', ')'], '(', ['Values', '(', '@variable1', ',', ['Alter', '(', '@variable2', ',', 'SUB', ',', '3', ')'], ')'],')',]
+    whilesTrue =  ['While', ['IsTrue', '(', '@variableBool', ')'], '(', ['Values', '(', '@variable1', ',', ['Alter', '(', '@variable2', ',', 'SUB', ',', '3', ')'], ')'], 'Break',')',]
     caseWhen = ['Case', 'When', ['IsTrue', '(', '@variableBool', ')'], 'Then', '(', ['MoveRight'], ')', 'Else', '(', ['MoveLeft'], ')']
     caseSwicth = ['Case', '@mellamocarlos', 'When', '1', 'Then', '(', ['MoveRight'], ['MoveLeft'], ')', 'When', '2', 'Then', '(', ['MoveLeft'],')','Else','(', ['MoveRight'], ')']
     alterB = ['AlterB', '(', '@variableBool', ')']
     repeat = ['Repeat', '(', ['New', '@meSientoFeliz', ',', '(', 'Num', ',', '1', ')'], 'Break' , ')']
+    printV = ['PrintValues', '(', '"Hola"', ',' , '@variable1',')']
 
     emitter = Emitter("computines.py")
     emitter.emitStatement(new)
@@ -33,6 +34,7 @@ def main():
     emitter.emitStatement(whilesTrue)
     emitter.emitStatement(alterB)
     emitter.emitStatement(repeat)
+    emitter.emitStatement(printV)
     
     emitter.writeFile()
 

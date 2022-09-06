@@ -36,7 +36,9 @@ else:
     moveLeft()
 while variableBool:
     variable1 = variable2-3
+    break
 variableBool = not variableBool
 while True:
     meSientoFeliz = 1
     break
+print(""+"Hola"+" "+str(variable1)+" ")
