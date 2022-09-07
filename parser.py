@@ -104,11 +104,14 @@ class Parser:
                 self.abort(f"Variable {statement[2].text} not initialized")
 
     def analizeProc(self):
+        # Proc Header Structure Seek
         self.nextToken() # Skip Proc Token
         procName = self.curToken.text # Save the Proc Name
         self.nextToken() # Skip name token
         self.nextToken() # Skip ( Token
-        
+
+        #Emiter.statement(["Proc", @nombre])
+
         while self.curToken.text != ';':
             if self.checkToken(TokenType.Proc):
                 self.abort("Sintax error: Proc into a proc")
@@ -116,7 +119,9 @@ class Parser:
                 procName = self.curToken.text
                 self.nextToken()
             elif Token.checkIfKeyword(self.curToken.text):
-                self.controlVariables(self.statement(), procName)
+                curStatement = self.statement()
+                self.controlVariables(curStatement, procName)
+                #Emiter
                 self.nextToken()
             elif self.curToken.text == "\n":
                 self.nextToken()
@@ -128,6 +133,7 @@ class Parser:
             else:
                 self.abort("Sintax error: Statement not initialize by keyword")
 
+        #Emiter.statement(["endProc"])
 
     def statement(self):
         keyword = self.curToken
@@ -139,6 +145,7 @@ class Parser:
                 self.nextToken()
                 tokenList.append(self.curToken)
             tokenList.append(self.peekToken)
+            # StatementAnalizer
             return tokenList
 
         while self.curToken.text != ';':
@@ -151,7 +158,9 @@ class Parser:
             elif self.curToken.text != "\n" and self.curToken.text != ";":
                 tokenList.append(self.curToken)
             self.nextToken()
-
+        
+        # StatementAnalizer
+        
         return tokenList
         
-        
+    
