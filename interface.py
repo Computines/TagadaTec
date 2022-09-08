@@ -10,9 +10,11 @@ import tkinter.font as tkfont
 from tkinter import filedialog
 from lex import *
 from parserTokens import Parser
+from ctypes import windll
 
 fnt=("Arial",10)
 filename = ""
+hasstyle = False
 SPACING     =   5
 WIDTH       =   1200
 HEIGHT      =   700
@@ -34,11 +36,28 @@ REDBG       =   "#d61425"
 
 class Interface:
     def __init__(self):
-        ########################## MAIN PANEL ###########################             
+        ########################## MAIN PANEL ###########################
         self.ventana=Tk()
         self.ventana.title("TagaPlate")
         self.ventana.minsize(WIDTH,HEIGHT) 
         self.ventana.resizable(width=NO, height=NO)
+
+        def set_appwindow():
+            global hasstyle
+            GWL_EXSTYLE=-20
+            WS_EX_APPWINDOW=0x00040000
+            WS_EX_TOOLWINDOW=0x00000080
+            if not hasstyle:
+                hwnd = windll.user32.GetParent(self.ventana.winfo_id())
+                style = windll.user32.GetWindowLongW(hwnd, GWL_EXSTYLE)
+                style = style & ~WS_EX_TOOLWINDOW
+                style = style | WS_EX_APPWINDOW
+                res = windll.user32.SetWindowLongW(hwnd, GWL_EXSTYLE, style)
+                self.ventana.withdraw()
+                self.ventana.after(10, lambda:self.ventana.wm_deiconify())
+                hasstyle=True
+
+
         self.ventana.overrideredirect(True)
 
         def cargar_img(nombre):
@@ -500,7 +519,10 @@ class Interface:
 
         buildButton.bind('<Button-1>',buildFile)
 
-        #self.ventana.protocol("WM_DELETE_WINDOW",1) 
+        #self.ventana.protocol("WM_DELETE_WINDOW",1)
+        self.ventana.update_idletasks()
+        self.ventana.withdraw()
+        set_appwindow() 
         self.ventana.mainloop()
 
 Interface() 
