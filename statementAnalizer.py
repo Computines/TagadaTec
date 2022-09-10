@@ -1,5 +1,3 @@
-from tkinter import S
-from tokenize import Token
 from typing import List
 import regex as rex
 from tokenController import Token
