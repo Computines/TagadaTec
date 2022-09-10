@@ -48,7 +48,6 @@ class Emitter:
         elif input[0] == 'Values':
             self.valuesStatement(input)
         elif input[0] == 'MoveRight':
-            print("move", self.identation)
             self.emitLine("moveRight()")
         elif input[0] == 'MoveLeft':
             self.emitLine("moveLeft()")
@@ -83,7 +82,6 @@ class Emitter:
 
 #[Proc, @nombreProc]
     def procStatement(self, input):
-        print("proc")
         procName = self.getVariableName(input, 1)
         self.emitLine('def ' + procName + '():')
         self.identation = 1
@@ -142,7 +140,6 @@ class Emitter:
 
 #until =  ['Until', '(', ['MoveRight'], ['While', '@variable1', '==', '5' , '(', ['Values', '(', '@variable1', ',', ['Alter', '(', '@variable2', ',', 'SUB', ',', '3', ')'], ')'],')',],')', '@variable1', '>=', '5' ]
     def untilStatement(self, input):
-        print("until")
         tempIndentation = self.identation
         self.checkIntructions(2, input)
         self.identation = tempIndentation
@@ -224,26 +221,19 @@ class Emitter:
     def checkIntructions(self, initialPosition, input):
         for position in range(initialPosition, len(input)):
             if isinstance(input[position], list):
-                print("check identation en check",self.identation)
                 self.emitIdentation()
                 if input[position][0] == 'Values':
-                    print("values")
                     self.valuesStatement(input[position])
                 elif input[position][0] == 'MoveRight':
-                    print("moveRigth", self.identation)
                     self.moveRightStatement()
-                    #self.emitLine("moveRight()")
                 elif input[position][0] == 'MoveLeft':
                     self.moveLeftStatement()
                 elif input[position][0] == 'Stop':
                     self.stopStatement()
-                    #self.emitLine("stop()")
                 elif input[position][0] == 'Hammer':
                     orientation = input[position][2]
                     self.hammerStatement(orientation)
-                    #self.emitLine("hammer("+orientation+")")
                 elif input[position][0] == 'While':
-                    print("While")
                     self.whileStatement(input[position])
                 elif input[position][0] == 'Until':
                     self.untilStatement(input[position])
@@ -262,15 +252,12 @@ class Emitter:
                     self.alterB(input)
             elif input[position] == '(':
                 self.identation += 1
-                print("(", self.identation)
             elif input[position] == ')':
                 self.identation -= 1
-                print(")", self.identation)
             elif input[position] == 'Break':
                 self.emitIdentation()
                 self.emitLine("break")
             else:
-                print("current pos" , position)
                 return position
     
     def emitFuntions(self):
