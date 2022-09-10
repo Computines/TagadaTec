@@ -1,12 +1,13 @@
 from os import abort
 import sys
+from statementAnalizer import StatementAnalizer
 from tokenController import TokenType, Token
 from lex import *
 # from statementAnalizer import StatementAnalizer
 
 # Parser object keeps track of current token and checks if the code matches the grammar.
 class Parser:
-    def __init__(self, lexer):
+    def __init__(self, lexer, emitter):
         self.lexer = lexer
 
         self.symbols = set()    # Variables declared so far.
@@ -19,6 +20,8 @@ class Parser:
         self.peekToken = None
         self.nextToken()
         self.nextToken()    # Call this twice to initialize current and peek.
+
+        self.emitter = emitter
 
     # Return true if the current token matches.
     def checkToken(self, kind):
@@ -110,8 +113,8 @@ class Parser:
         self.nextToken() # Skip name token
         self.nextToken() # Skip ( Token
 
-        
-        #Emiter.statement(["Proc", @nombre])
+
+        self.emitter.emitStatement(['Proc', '@procedure', '('])
 
         while self.curToken.text != ';':
             if self.checkToken(TokenType.Proc):
@@ -122,7 +125,8 @@ class Parser:
             elif Token.checkIfKeyword(self.curToken.text):
                 curStatement = self.statement()
                 self.controlVariables(curStatement, procName)
-                #Emiter
+                listOfTokens = self.convertTokenToText(curStatement)
+                self.emitter.emitStatement(listOfTokens)
                 self.nextToken()
             elif self.curToken.text == "\n":
                 self.nextToken()
@@ -134,7 +138,7 @@ class Parser:
             else:
                 self.abort("Sintax error: Statement not initialize by keyword")
 
-        #Emiter.statement(["endProc"])
+        self.emitter.emitStatement(['EndProc'])
 
     def statement(self):
         keyword = self.curToken
@@ -146,6 +150,7 @@ class Parser:
                 self.nextToken()
                 tokenList.append(self.curToken)
             tokenList.append(self.peekToken)
+            StatementAnalizer.analize(tokenList)
             # StatementAnalizer
             return tokenList
 
@@ -159,8 +164,13 @@ class Parser:
             elif self.curToken.text != "\n" and self.curToken.text != ";":
                 tokenList.append(self.curToken)
             self.nextToken()
+
+        StatementAnalizer.analize(tokenList)
         # StatementAnalizer
         
         return tokenList
         
+    def convertTokenToText(self, listOfTokens):
+        result = [token.text for token in listOfTokens] 
+        return result
     

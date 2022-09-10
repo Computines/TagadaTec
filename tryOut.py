@@ -1,6 +1,7 @@
 
 from lex import *
 from parser import *
+from emitter import *
 
 # def main():
 # 	input = "==<="
@@ -16,12 +17,13 @@ def main():
     # input = "Proc @trep (\n\nValues(@variable2, Alter(@variable1, SUB, 3));\n);"
     input = "New @pepe, (Num, 4);\n Values(@pepe, Alter(@pepe, SUB, 3));\n AlterB(@pepe);\n"
     lexer = Lexer(input)
-    #parser = Parser(lexer)
-    token = lexer.getToken()
-    #parser.program()
+    emitter = Emitter("programComputines")
+    parser = Parser(lexer, emitter)
+    #token = lexer.getToken()
+    parser.program()
 
-    while token.kind != TokenType.EOF:
-        print(token.kind)   
-        token = lexer.getToken()
+    #while token.kind != TokenType.EOF:
+    #    print(token.kind)   
+    #    token = lexer.getToken()
 
 main()
