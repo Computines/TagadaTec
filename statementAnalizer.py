@@ -32,7 +32,11 @@ class StatementAnalizer():
     def listToRegexExpresion(listTokenType: List[Token]) -> str:
         expectedRegex = ""
         for token in listTokenType:
-            expectedRegex += f"{token.kind.value}"
+            if isinstance(token, list):
+                StatementAnalizer.analize(token)
+                expectedRegex += f"{token[0].kind.value}"
+            else:
+                expectedRegex += f"{token.kind.value}"
         # print(expectedRegex)
         return expectedRegex
 
