@@ -21,7 +21,7 @@ def main():
     parser = Parser(lexer, emitter)
     #token = lexer.getToken()
     parser.program()
-
+    
     #while token.kind != TokenType.EOF:
     #    print(token.kind)   
     #    token = lexer.getToken()
