@@ -110,6 +110,7 @@ class Parser:
         self.nextToken() # Skip name token
         self.nextToken() # Skip ( Token
 
+        
         #Emiter.statement(["Proc", @nombre])
 
         while self.curToken.text != ';':
@@ -158,7 +159,6 @@ class Parser:
             elif self.curToken.text != "\n" and self.curToken.text != ";":
                 tokenList.append(self.curToken)
             self.nextToken()
-        
         # StatementAnalizer
         
         return tokenList
