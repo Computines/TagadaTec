@@ -1,5 +1,8 @@
+from lib2to3.pytree import convert
 from os import abort
+from subprocess import list2cmdline
 import sys
+from unittest import result
 from statementAnalizer import StatementAnalizer
 from tokenController import TokenType, Token
 from lex import *
@@ -48,7 +51,8 @@ class Parser:
 
     def program(self):
         # Parse all the statements in the program.
-        while not self.checkToken(TokenType.EOF):
+        #while not self.checkToken(TokenType.EOF):
+        while True:
             # Since some newlines are required in our grammar, need to skip the excess.
             while self.checkToken(TokenType.NEWLINE):
                 self.nextToken()
@@ -58,9 +62,14 @@ class Parser:
                 self.analizeProc()
                 self.nextToken()
             elif Token.checkIfKeyword(self.curToken.text):
-                self.controlVariables(self.statement(), "noProc")
+                statement = self.statement()
+                self.controlVariables(statement, "noProc")
+                StatementAnalizer.analize(statement)
+                listOfTokens = self.convertTokenToText(statement)
+                self.emitter.emitStatement(listOfTokens)
                 self.nextToken()
             elif self.checkToken(TokenType.EOF):
+                self.emitter.writeFile()
                 print("complied completed")
                 break
             else:
@@ -114,7 +123,7 @@ class Parser:
         self.nextToken() # Skip ( Token
 
 
-        self.emitter.emitStatement(['Proc', '@procedure', '('])
+        self.emitter.emitStatement(['Proc', procName, '('])
 
         while self.curToken.text != ';':
             if self.checkToken(TokenType.Proc):
@@ -132,7 +141,7 @@ class Parser:
                 self.nextToken()
             elif self.curToken.text == ")" and self.peekToken.text == ";":
                 self.nextToken()
-                return
+                break
             elif self.checkToken(TokenType.EOF):
                 self.abort("Sintax Error: Proc never finalize")
             else:
@@ -171,6 +180,11 @@ class Parser:
         return tokenList
         
     def convertTokenToText(self, listOfTokens):
-        result = [token.text for token in listOfTokens] 
+        result = []
+        for token in listOfTokens:
+            if isinstance(token,list):
+                result.append(self.convertTokenToText(token))
+            else:
+                result.append(token.text)
         return result
     
