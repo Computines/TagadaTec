@@ -1,5 +1,3 @@
-from email.message import EmailMessage
-from timeit import repeat
 from emitter import *
 
 def main():

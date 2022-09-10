@@ -1,8 +1,4 @@
-from lib2to3.pytree import convert
-from os import abort
-from subprocess import list2cmdline
 import sys
-from unittest import result
 from statementAnalizer import StatementAnalizer
 from tokenController import TokenType, Token
 from lex import *
