@@ -1,6 +1,6 @@
 
 from lex import *
-from parser import *
+from parserTokens import *
 from emitter import *
 
 # def main():
