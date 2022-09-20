@@ -9,3 +9,5 @@ New @variable1,(Num, 5);
 Values(@variable2, Alter(@variable1, ADD, 3));
 );
 CALL(@trep);
+CALL(@trep);
+

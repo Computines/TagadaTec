@@ -242,6 +242,7 @@ class Interface:
 
         ########################## BUTTONS ###########################
         def readFile(file, i=1):
+            global filename
             try:
                 line=file.readline()
                 codingArea.insert(END,line)
@@ -250,6 +251,7 @@ class Interface:
                 file.close()
 
         def saveFile(file, i=0):
+            global filename
             try:
                 file.write(codingArea.get("1.0",END))
             except:
@@ -269,6 +271,7 @@ class Interface:
                 newCodeLine(1)
         
         def saveChanges():
+            global filename
             try:
                 file=open(filename,"r+")
                 saveFile(file)
@@ -287,6 +290,7 @@ class Interface:
                 pass
 
         def onDoubleClick(e):
+            global filename
             item = folderTree.selection()[0]
             codingArea.delete('1.0', END)
             try:
@@ -523,7 +527,8 @@ class Interface:
         def runFile(e):
             buildFile(e)
             try:
-                os.system('outputCompiled.py')
+                #os.system('outputCompiled.py')
+                newConsoleLine(os.popen('outputCompiled.py').read())
             except Exception as n:
                 errorLine(n)
                 newConsoleLine(str(n))  
