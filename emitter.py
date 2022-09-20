@@ -1,7 +1,4 @@
 import sys
-from tabnanny import check
-from turtle import pos
-from urllib.parse import ParseResultBytes
 
 # ['New', '@variable', ',', '(', 'Num', ',', '5', ')']
 # ['Alter', '(', '@variable1', ',', 'SUB', ',', '3', ')']

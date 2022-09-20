@@ -1,8 +1,4 @@
-from lib2to3.pytree import convert
-from os import abort
-from subprocess import list2cmdline
 import sys
-from unittest import result
 from statementAnalizer import StatementAnalizer
 from tokenController import TokenType, Token
 from lex import *
@@ -12,6 +8,7 @@ from lex import *
 class Parser:
     def __init__(self, lexer, emitter):
         self.lexer = lexer
+        self.emitter = emitter
 
         self.symbols = set()    # Variables declared so far.
         self.labelsDeclared = set() # Labels declared so far.
@@ -24,7 +21,7 @@ class Parser:
         self.nextToken()
         self.nextToken()    # Call this twice to initialize current and peek.
 
-        self.emitter = emitter
+        self.newLineCounter = 0 
 
     # Return true if the current token matches.
     def checkToken(self, kind):
@@ -55,6 +52,7 @@ class Parser:
         while True:
             # Since some newlines are required in our grammar, need to skip the excess.
             while self.checkToken(TokenType.NEWLINE):
+                self.newLineCounter += 1
                 self.nextToken()
 
             #print(self.curToken.text)
@@ -71,6 +69,7 @@ class Parser:
             elif self.checkToken(TokenType.EOF):
                 self.emitter.writeFile()
                 print("complied completed")
+                print(self.newLineCounter)
                 break
             else:
                 self.abort("Sintax error: Statement not initialize by keyword")
@@ -138,6 +137,8 @@ class Parser:
                 self.emitter.emitStatement(listOfTokens)
                 self.nextToken()
             elif self.curToken.text == "\n":
+                self.newLineCounter += 1
+                print("proc", self.newLineCounter)
                 self.nextToken()
             elif self.curToken.text == ")" and self.peekToken.text == ";":
                 self.nextToken()
@@ -170,6 +171,8 @@ class Parser:
                 self.abort("Sintax Error: Proc inside a statement")
             elif self.checkToken(TokenType.EOF):
                 self.abort("Sintax Error: Statement never finalize")
+            elif self.curToken.text == "\n":
+                self.newLineCounter += 1
             elif self.curToken.text != "\n" and self.curToken.text != ";":
                 tokenList.append(self.curToken)
             self.nextToken()
