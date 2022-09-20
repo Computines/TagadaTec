@@ -9,6 +9,7 @@ class Lexer:
         self.nextChar()
         self.initialParenthesis = 0
         self.finalParenthesis = 0 
+        self.newLineCount = 1
 
     # Process the next character.
     def nextChar(self):
@@ -29,7 +30,7 @@ class Lexer:
 
     # Invalid token found, print error message and exit.
     def abort(self, message):
-        sys.exit("Lexing error. " + message)
+        raise Exception("Lexer error in line "+ str(self.newLineCount)+". " + message)
 		
     # Skip whitespace except newlines, which we will use to indicate the end of a statement.
     def skipWhitespace(self):
@@ -134,6 +135,12 @@ class Lexer:
             self.checkParenthesisCount()
             tokenText = self.curChar
             keyValue = tokenText
+        elif self.curChar =='\n':
+            keyValue = '\n'
+            tokenText = keyValue
+            self.newLineCount += 1
+
+
 
 
         try:
@@ -194,14 +201,7 @@ class Lexer:
 
     def checkComaAndSemiColon(self):
         tokenText = self.curChar
-        if self.curChar == ';':
-            if self.peek() == '\n':
-                self.nextChar()
-                return tokenText
-            else:
-                self.abort("Missing an enter after ;")
-        else:
-            return tokenText
+        return tokenText
     
     def checkParenthesisCount(self):
         if self.curChar == '(':

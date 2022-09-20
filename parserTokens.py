@@ -1,3 +1,4 @@
+from os import abort
 import sys
 from statementAnalizer import StatementAnalizer
 from tokenController import TokenType, Token
@@ -44,7 +45,7 @@ class Parser:
         # No need to worry about passing the EOF, lexer handles that.
 
     def abort(self, message):
-        sys.exit("Error. " + message)
+        raise Exception("Parser error in line "+ str(1)+". "+ message)
 
     def program(self):
         # Parse all the statements in the program.
@@ -72,7 +73,7 @@ class Parser:
                 print(self.newLineCounter)
                 break
             else:
-                self.abort("Sintax error: Statement not initialize by keyword")
+                self.abort("Sintax error: Statement not initialized by keyword")
 
     def controlVariables(self, statement: list, procName: str):
         if statement[0].kind == TokenType.New:
@@ -144,9 +145,9 @@ class Parser:
                 self.nextToken()
                 break
             elif self.checkToken(TokenType.EOF):
-                self.abort("Sintax Error: Proc never finalize")
+                self.abort("Sintax error: Proc never finalized")
             else:
-                self.abort("Sintax error: Statement not initialize by keyword")
+                self.abort("Sintax error: Statement not initialized by keyword")
 
         self.emitter.emitStatement(['EndProc'])
 
@@ -168,7 +169,7 @@ class Parser:
             if Token.checkIfKeyword(self.curToken.text) and self.curToken.text != keyword.text and not self.checkToken(TokenType.Proc):
                 tokenList.append(self.statement()) # Recursive Call
             elif self.checkToken(TokenType.Proc):
-                self.abort("Sintax Error: Proc inside a statement")
+                self.abort("Sintax error: Proc inside a statement")
             elif self.checkToken(TokenType.EOF):
                 self.abort("Sintax Error: Statement never finalize")
             elif self.curToken.text == "\n":
