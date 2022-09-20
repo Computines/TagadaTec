@@ -36,8 +36,8 @@ class Emitter:
         self.emitFuntions()
 
     def emitStatement(self, input):
-        print("emitStatement")
-        print(input)
+        # print("emitStatement")
+        # print(input)
         if input[0] != 'Until':
             self.emitIdentation()
         if input[0] == 'Proc':
@@ -45,7 +45,7 @@ class Emitter:
         elif input[0] == 'EndProc':
             self.endProc()
         elif input[0] == 'Values':
-            print("values")
+            # print("values")
             self.valuesStatement(input)
         elif input[0] == 'MoveRight':
             self.emitLine("moveRight()")
@@ -61,7 +61,7 @@ class Emitter:
         elif input[0] == 'Until':
             self.untilStatement(input)
         elif input[0] == 'New':
-            print("new")
+            # print("new")
             self.newVariable(input)
         elif input[0] == 'Repeat':
             self.repeat(input)
@@ -75,6 +75,7 @@ class Emitter:
         elif input[0] == 'AlterB':
             self.alterB(input)
         elif input[0] == 'CALL':
+            # print("estoy en el call")
             self.callStatement(input)
 
     def getVariableName(self, input, position):
@@ -200,6 +201,7 @@ class Emitter:
             currentPosition = self.checkIntructions(currentPosition, input)
 #[Call, (, @proc, )]
     def callStatement(self, input):
+        # print("estoy aqui")
         procName = self.getVariableName(input, 2)
         self.emitLine(procName+"()")
 
