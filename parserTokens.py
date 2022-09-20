@@ -23,7 +23,7 @@ class Parser:
         self.nextToken()
         self.nextToken()    # Call this twice to initialize current and peek.
 
-        self.newLineCounter = 0 
+        self.newLineCounter = 1 
 
     # Return true if the current token matches.
     def checkToken(self, kind):
@@ -46,7 +46,7 @@ class Parser:
         # No need to worry about passing the EOF, lexer handles that.
 
     def abort(self, message):
-        raise Exception("Parser error in line "+ self.newLineCounter +". "+ message)
+        raise Exception("Parser error in line "+ str(self.newLineCounter) +". "+ message)
 
     def program(self):
         # Parse all the statements in the program.

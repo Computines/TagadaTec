@@ -8,5 +8,14 @@ def stop():
     pass
 def hammer(orientation):
     pass
-pepe = 4
-pepe = pepe-7
+def trep():
+    variable2 = 5
+    variable1 = 5
+    variable2 = variable1-3
+    
+def proc():
+    variable2 = 3
+    variable1 = 5
+    variable2 = variable1+3
+    
+trep()

@@ -17,7 +17,7 @@ class StatementAnalizer():
         "Hammer" : regexGenerator('Hammer INITIAL_PARENTESIS [N|S|O|E] FINAL_PARENTESIS'),
         "Stop" : regexGenerator('Stop'),
         "IsTrue": regexGenerator('IsTrue INITIAL_PARENTESIS VARIABLE_NAME FINAL_PARENTESIS'),
-        "PrintValues" : regexGenerator('INITIAL_PARENTESIS [STRING|VARIABLE_NAME] ( COMMA [STRING|VARIABLE_NAME] ) ! FINAL_PARENTESIS'),
+        "PrintValues" : regexGenerator('PrintValues INITIAL_PARENTESIS [STRING|VARIABLE_NAME] ( COMMA [STRING|VARIABLE_NAME] ) ! FINAL_PARENTESIS'),
         "Proc": regexGenerator('Proc VARIABLE_NAME INITIAL_PARENTESIS * FINAL_PARENTESIS'),
         "CALL": regexGenerator('CALL INITIAL_PARENTESIS VARIABLE_NAME FINAL_PARENTESIS'),
         "Repeat": regexGenerator('Repeat INITIAL_PARENTESIS * FINAL_PARENTESIS'),
