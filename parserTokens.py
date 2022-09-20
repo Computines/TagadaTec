@@ -45,7 +45,7 @@ class Parser:
         # No need to worry about passing the EOF, lexer handles that.
 
     def abort(self, message):
-        raise Exception("Parser error in line "+ str(1)+". "+ message)
+        raise Exception("Parser error in line "+ self.newLineCounter +". "+ message)
 
     def program(self):
         # Parse all the statements in the program.
