@@ -15,7 +15,9 @@ class Emitter:
         self.currentToken = None
         self.nextToken = None
         self.identation = 0
+        self.principal = False
         self.commonFuntions()
+
 
     def abort(self, message):
         sys.exit("Error. " + message)
@@ -41,6 +43,7 @@ class Emitter:
         if input[0] != 'Until':
             self.emitIdentation()
         if input[0] == 'Proc':
+            print("PROC")
             self.procStatement(input)
         elif input[0] == 'EndProc':
             self.endProc()
@@ -85,16 +88,24 @@ class Emitter:
 #[Proc, @nombreProc]
     def procStatement(self, input):
         procName = self.getVariableName(input, 1)
+        if procName == 'principal':
+            self.principal = True
         self.emitLine('def ' + procName + '():')
         self.identation = 1
     
     def endProc(self):
+        if self.principal == True:
+            self.principal = False
         self.emitLine("")
         self.identation = 0
 
     def newVariable (self, input):
         variableName = self.getVariableName(input, 1)
         variableValue = input[6]
+        print(self.principal)
+        if self.principal== True:
+            self.emitLine('global '+ variableName)
+            self.emitIdentation()
         line = variableName + ' = ' + variableValue
         self.emitLine(line)
 
