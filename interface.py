@@ -191,6 +191,11 @@ class Interface:
                 id=folderTree.insert(parent,'end',text=d,open=False, tags=tuple(map(str, full_path.split('%\%'))))
                 if isdir:
                     traverse_dir(id,full_path)
+
+        def delete_dir():
+            for i in folderTree.get_children():
+                folderTree.delete(i)
+
         traverse_dir(node,directory)
 
         xscrollTree.config(command=folderTree.xview)
@@ -288,6 +293,10 @@ class Interface:
                 saveFile(file)
             except:
                 pass
+            delete_dir()
+            directory=os.getcwd()
+            node=folderTree.insert('','end', text=os.path, open=True)
+            traverse_dir(node,directory)
 
         def onDoubleClick(e):
             global filename
