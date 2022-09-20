@@ -215,6 +215,12 @@ class Interface:
         def on_leaveExit(e):
             exitButton['background'] = MENUBAR
 
+        def on_enterNew(e):
+            newButton['background'] = LIGHTERBG
+
+        def on_leaveNew(e):
+            newButton['background'] = TOOLBAR
+
         def on_enterOpen(e):
             openButton['background'] = LIGHTERBG
 
@@ -246,6 +252,12 @@ class Interface:
             runButton['background'] = TOOLBAR
 
         ########################## BUTTONS ###########################
+        def newFile():
+            global filename
+            filename = ""
+            codingArea.delete('1.0', END)
+            openedFile["text"]="TagaPlate"
+
         def readFile(file, i=1):
             global filename
             try:
@@ -320,33 +332,39 @@ class Interface:
         exitButton.bind("<Leave>", on_leaveExit)
         exitButton.bind('<Button-1>', close)
 
+        newImage = cargar_img("newImage.png")
+        newButton = Button(toolbar, image=newImage, width=TOOLBWIDTH-2, height=TOOLBWIDTH, border=0, bg=TOOLBAR, command=newFile)
+        newButton.place(x=0,y=0, anchor=NW)
+        newButton.bind("<Enter>", on_enterNew)
+        newButton.bind("<Leave>", on_leaveNew)
+
         openImage = cargar_img("openImage.png")
         openButton = Button(toolbar, image=openImage, width=TOOLBWIDTH-2, height=TOOLBWIDTH, border=0, bg=TOOLBAR, command=browseFiles)
-        openButton.place(x=0,y=0, anchor=NW)
+        openButton.place(x=0,y=1*BUTTONGRID, anchor=NW)
         openButton.bind("<Enter>", on_enterOpen)
         openButton.bind("<Leave>", on_leaveOpen)
 
         saveImage = cargar_img("saveImage.png")
         saveButton = Button(toolbar, image=saveImage, width=TOOLBWIDTH-2, height=TOOLBWIDTH, border=0, bg=TOOLBAR, command=saveChanges)
-        saveButton.place(x=0,y=1*BUTTONGRID, anchor=NW)
+        saveButton.place(x=0,y=2*BUTTONGRID, anchor=NW)
         saveButton.bind("<Enter>", on_enterSave)
         saveButton.bind("<Leave>", on_leaveSave)
 
         saveAsImage = cargar_img("saveAsImage.png")
         saveAsButton = Button(toolbar, image=saveAsImage, width=TOOLBWIDTH-2, height=TOOLBWIDTH, border=0, bg=TOOLBAR, command=saveAs)
-        saveAsButton.place(x=0,y=2*BUTTONGRID, anchor=NW)
+        saveAsButton.place(x=0,y=3*BUTTONGRID, anchor=NW)
         saveAsButton.bind("<Enter>", on_enterSaveAs)
         saveAsButton.bind("<Leave>", on_leaveSaveAs)
 
         buildImage = cargar_img("buildImage.png")
         buildButton = Button(toolbar, image=buildImage, width=TOOLBWIDTH-2, height=TOOLBWIDTH, border=0, bg=TOOLBAR)
-        buildButton.place(x=0,y=3*BUTTONGRID, anchor=NW)
+        buildButton.place(x=0,y=4*BUTTONGRID, anchor=NW)
         buildButton.bind("<Enter>", on_enterBuild)
         buildButton.bind("<Leave>", on_leaveBuild)
 
         runImage = cargar_img("runImage.png")
         runButton = Button(toolbar, image=runImage, width=TOOLBWIDTH-2, height=TOOLBWIDTH, border=0, bg=TOOLBAR)
-        runButton.place(x=0,y=4*BUTTONGRID, anchor=NW)
+        runButton.place(x=0,y=5*BUTTONGRID, anchor=NW)
         runButton.bind("<Enter>", on_enterRun)
         runButton.bind("<Leave>", on_leaveRun)
 
