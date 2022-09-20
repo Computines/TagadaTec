@@ -6,7 +6,7 @@ informalRegex = 'INITIAL_PARENTESIS [STRING|VARIABLE_NAME] ( COMMA [STRING|VARIA
 def regexGenerator(informalRegex):
     listTokens = informalRegex.split(" ")
     finalRegex = ""
-    print(listTokens)
+    # print(listTokens)
     for token in listTokens:
         if token[0] == "[":
             orList = token[1:-1].split("|")
@@ -21,7 +21,10 @@ def regexGenerator(informalRegex):
         elif token == "!":
             finalRegex += "*"
         else:
-            finalRegex += f"({Token.checkTokenType(token, 0).value})"
+            try:
+                finalRegex += f"({Token.checkTokenType(token, 0).value})"
+            except:
+                print("Caracter inválido:", token)
         # print(finalRegex)
     return finalRegex
 

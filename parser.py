@@ -15,6 +15,7 @@ class Parser:
         self.labelsGotoed = set() # Labels goto'ed so far.
 
         self.variables = {}
+        self.procs = []
 
         self.curToken = None
         self.peekToken = None
@@ -62,14 +63,13 @@ class Parser:
             elif Token.checkIfKeyword(self.curToken.text):
                 statement = self.statement()
                 self.controlVariables(statement, "noProc")
-                StatementAnalizer.analize(statement)
                 listOfTokens = self.convertTokenToText(statement)
                 self.emitter.emitStatement(listOfTokens)
                 self.nextToken()
             elif self.checkToken(TokenType.EOF): 
                 self.emitter.writeFile()
                 print("complied completed")
-                print(self.newLineCounter)
+                # print(self.newLineCounter)
                 break
             else:
                 self.abort("Sintax error: Statement not initialize by keyword")
@@ -131,6 +131,12 @@ class Parser:
         # Proc Header Structure Seek
         self.nextToken() # Skip Proc Token
         procName = self.curToken.text # Save the Proc Name
+        
+        if procName in self.procs:
+            self.abort("Proc " + procName + " is defined more than once")
+        else:
+            self.procs.append(procName)
+
         self.nextToken() # Skip name token
         self.nextToken() # Skip ( Token
 
@@ -151,7 +157,7 @@ class Parser:
                 self.nextToken()
             elif self.curToken.text == "\n":
                 self.newLineCounter += 1
-                print("proc", self.newLineCounter)
+                # print("proc", self.newLineCounter)
                 self.nextToken()
             elif self.curToken.text == ")" and self.peekToken.text == ";":
                 self.nextToken()
@@ -172,9 +178,10 @@ class Parser:
             while self.peekToken.text != ')':
                 self.nextToken()
                 tokenList.append(self.curToken)
-            tokenList.append(self.peekToken)
-            StatementAnalizer.analize(tokenList)
-            # StatementAnalizer
+            self.nextToken()
+            tokenList.append(self.curToken)
+            if not StatementAnalizer.analize(tokenList):
+                self.abort("Sintax error")
             return tokenList
 
         while self.curToken.text != ';':
@@ -190,8 +197,8 @@ class Parser:
                 tokenList.append(self.curToken)
             self.nextToken()
 
-        StatementAnalizer.analize(tokenList)
-        # StatementAnalizer
+        if not StatementAnalizer.analize(tokenList):
+            self.abort("Sintax error")
         
         return tokenList
         
