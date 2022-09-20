@@ -74,7 +74,7 @@ class Emitter:
             self.printValues(input)
         elif input[0] == 'AlterB':
             self.alterB(input)
-        elif input[0] == 'Call':
+        elif input[0] == 'CALL':
             self.callStatement(input)
 
     def getVariableName(self, input, position):

@@ -11,6 +11,7 @@ from tkinter import filedialog
 from lex import *
 from parserTokens import Parser
 from ctypes import windll
+from emitter import *
 
 fnt=("Arial",10)
 filename = ""
@@ -508,16 +509,27 @@ class Interface:
         def buildFile(e):
             try:
                 lexer = Lexer(codingArea.get('1.0', END))
-                parser = Parser(lexer)
+                emitter = Emitter("outputCompiled.py")
+                parser = Parser(lexer, emitter)
                 parser.program() 
                 newConsoleLine("Complilation Completed")
-            except Exception as e:
-                errorLine(e)
-                newConsoleLine(str(e))
-                
-                   
+            except Exception as n:
+                try:
+                    errorLine(n)
+                except:
+                    pass
+                newConsoleLine(str(n))
+
+        def runFile(e):
+            buildFile(e)
+            try:
+                os.system('outputCompiled.py')
+            except Exception as n:
+                errorLine(n)
+                newConsoleLine(str(n))  
 
         buildButton.bind('<Button-1>',buildFile)
+        runButton.bind('<Button-1>',runFile)
 
         #self.ventana.protocol("WM_DELETE_WINDOW",1)
         self.ventana.update_idletasks()
