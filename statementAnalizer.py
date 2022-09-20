@@ -22,8 +22,8 @@ class StatementAnalizer():
         "Repeat": regexGenerator('Repeat INITIAL_PARENTESIS * FINAL_PARENTESIS'),
         "Until": regexGenerator('Until INITIAL_PARENTESIS * FINAL_PARENTESIS [Number|true|false|VARIABLE_NAME] [EQUAL_EQUAL|NOT_EQUAL|LESS|LESS_EQUAL|GREATER|GREATER_EQUAL] [Number|true|false|VARIABLE_NAME]'),
         "While": regexGenerator('While [Number|true|false|VARIABLE_NAME] [EQUAL_EQUAL|NOT_EQUAL|LESS|LESS_EQUAL|GREATER|GREATER_EQUAL] [Number|true|false|VARIABLE_NAME] INITIAL_PARENTESIS * FINAL_PARENTESIS'),
-        "Case When": regexGenerator('Case When INITIAL_PARENTESIS [Number|true|false|VARIABLE_NAME] [EQUAL_EQUAL|NOT_EQUAL|LESS|LESS_EQUAL|GREATER|GREATER_EQUAL] [Number|true|false|VARIABLE_NAME] FINAL_PARENTESIS Then INITIAL_PARENTESIS * FINAL_PARENTESIS [Else INITIAL_PARENTEISIS * FINAL_PARENTESIS]'),
-        "Case": regexGenerator('Case VARIABLE_NAME When [true|false|Number] Then INITIAL_PARENTESIS * FINAL_PARENTESIS ( When [true|false|Number] Then INITIAL_PARENTESIS * FINAL_PARENTESIS ) ! [Else INITIAL_PARENTESIS * FINAL_PARENTESIS|]'), # Diani Ese or al final que pex?
+        "Case When": regexGenerator('Case When INITIAL_PARENTESIS [Number|true|false|VARIABLE_NAME] [EQUAL_EQUAL|NOT_EQUAL|LESS|LESS_EQUAL|GREATER|GREATER_EQUAL] [Number|true|false|VARIABLE_NAME] FINAL_PARENTESIS Then INITIAL_PARENTESIS * FINAL_PARENTESIS ( Else INITIAL_PARENTEISIS * FINAL_PARENTESIS ) ?'),
+        "Case": regexGenerator('Case VARIABLE_NAME When [true|false|Number] Then INITIAL_PARENTESIS * FINAL_PARENTESIS ( When [true|false|Number] Then INITIAL_PARENTESIS * FINAL_PARENTESIS ) ! ( Else INITIAL_PARENTESIS * FINAL_PARENTESIS ) ?'), # Diani Ese or al final que pex?
     }
     def __init__(self) -> None:
         pass
