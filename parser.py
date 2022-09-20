@@ -66,7 +66,7 @@ class Parser:
                 listOfTokens = self.convertTokenToText(statement)
                 self.emitter.emitStatement(listOfTokens)
                 self.nextToken()
-            elif self.checkToken(TokenType.EOF):
+            elif self.checkToken(TokenType.EOF): 
                 self.emitter.writeFile()
                 print("complied completed")
                 print(self.newLineCounter)
@@ -81,6 +81,7 @@ class Parser:
                 self.variables[statement[1].text] = (procName, statement[4].text)
             else:
                 self.abort("Data type does not match with initialize type")
+                
         elif statement[0].kind == TokenType.Values:
             for variable in self.variables.items():
                 if variable[0] == statement[2].text:
@@ -95,6 +96,7 @@ class Parser:
                         self.abort("Data type does not match with variable's type")
             else:
                 self.abort(f"Variable {statement[2].text} not initialized")
+
         elif statement[0].kind == TokenType.Alter:
             for variable in self.variables.items():
                 if variable[0] == statement[2].text:
@@ -104,7 +106,18 @@ class Parser:
                         self.abort("Data type does not match with variable's type")
             else:
                 self.abort(f"Variable {statement[2].text} not initialized")
+
         elif statement[0].kind == TokenType.AlterB:
+            for variable in self.variables.items():
+                if variable[0] == statement[2].text:
+                    if variable[1][1] == "Bool":
+                        break
+                    else:
+                        self.abort("Data type does not match with variable's type")
+            else:
+                self.abort(f"Variable {statement[2].text} not initialized")
+
+        elif statement[0].kind == TokenType.IsTrue:
             for variable in self.variables.items():
                 if variable[0] == statement[2].text:
                     if variable[1][1] == "Bool":
