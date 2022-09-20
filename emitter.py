@@ -74,7 +74,8 @@ class Emitter:
             self.printValues(input)
         elif input[0] == 'AlterB':
             self.alterB(input)
-        elif input[0] == 'Call':
+        elif input[0] == 'CALL':
+            print("estoy en el call")
             self.callStatement(input)
 
     def getVariableName(self, input, position):
@@ -200,6 +201,7 @@ class Emitter:
             currentPosition = self.checkIntructions(currentPosition, input)
 #[Call, (, @proc, )]
     def callStatement(self, input):
+        print("estoy aqui")
         procName = self.getVariableName(input, 2)
         self.emitLine(procName+"()")
 
