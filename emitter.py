@@ -15,7 +15,11 @@ class Emitter:
         self.currentToken = None
         self.nextToken = None
         self.identation = 0
+        self.emitHeader()
+        self.emitSetup()
+        self.principal = False
         self.commonFuntions()
+
 
     def abort(self, message):
         sys.exit("Error. " + message)
@@ -41,6 +45,7 @@ class Emitter:
         if input[0] != 'Until':
             self.emitIdentation()
         if input[0] == 'Proc':
+            print("PROC")
             self.procStatement(input)
         elif input[0] == 'EndProc':
             self.endProc()
@@ -85,16 +90,24 @@ class Emitter:
 #[Proc, @nombreProc]
     def procStatement(self, input):
         procName = self.getVariableName(input, 1)
+        if procName == 'principal':
+            self.principal = True
         self.emitLine('def ' + procName + '():')
         self.identation = 1
     
     def endProc(self):
+        if self.principal == True:
+            self.principal = False
         self.emitLine("")
         self.identation = 0
 
     def newVariable (self, input):
         variableName = self.getVariableName(input, 1)
         variableValue = input[6]
+        print(self.principal)
+        if self.principal== True:
+            self.emitLine('global '+ variableName)
+            self.emitIdentation()
         line = variableName + ' = ' + variableValue
         self.emitLine(line)
 
@@ -277,13 +290,28 @@ class Emitter:
             else:
                 self.emitLine("def " + function + "(orientation):")
             self.emitIdentation()
-            functions.get(function)()          
+            functions.get(function)() 
+
+    def emitHeader(self):
+        self.emitLine("from pymata4 import pymata4")
+        self.emitLine("import time")
+        self.emitLine("numStep = 512")
+        self.emitLine("pinStepper = [7,6,5,4]")
+        self.emitLine("board = pymata4.Pymata4()")
+        self.emitLine("phase1 = 5")
+        self.emitLine("phase2 = 0")
+
+    def emitSetup(self):
+        self.emitLine("def setup():")
+        self.emitIdentation()
+        self.setup()
+        self.emitLine("setup()")
+
 
     def hammerStatement(self, orientation):
         self.emitLine("hammer("+orientation+")")
 
     def moveRightStatement(self):
-
         self.emitLine("moveRight()")
 
     def moveLeftStatement(self):
@@ -292,16 +320,43 @@ class Emitter:
     def stopStatement(self):
         self.emitLine("stop()")
 
-    def hammer(self):
-        self.emitLine("pass")
+    def setup(self):
+        self.emitLine("    board.set_pin_mode_stepper(numStep, pinStepper)")
+        self.emitLine("    board.set_pin_mode_servo(9)")
+        self.emitLine("    board.set_pin_mode_servo(8)")
+        self.emitLine("    board.servo_write(8, 90-phase1)")
+        self.emitLine("    board.servo_write(9, 90-phase2)")
         self.identation = 0
 
+    def hammer(self):
+        self.emitLine("if orientation == 'N':")
+        self.hammerInstructions(8, 120)
+        self.emitLine("    elif orientation == 'S':")
+        self.hammerInstructions(8, 60)
+        self.emitLine("    elif orientation == 'E':")
+        self.hammerInstructions(9, 120)
+        self.emitLine("    elif orientation == 'O':")
+        self.hammerInstructions(9, 60)
+        self.identation = 0
+
+    def hammerInstructions(self, output, angle):
+        self.emitLine("        board.servo_write(" + str(output) + ", " + str(angle) + "-phase1)")
+        self.emitLine("        time.sleep(1)")
+        self.emitLine("        board.servo_write(" + str(output) + ", " + "90-phase1)")
+        self.emitLine("        time.sleep(1)")
+
     def moveRight(self):
-        self.emitLine("pass")
+        self.emitLine("board.stepper_write(25, 1100)")
+        self.emitLine("    board.send_reset()")
+        self.emitLine("    time.sleep(6)")
+        self.emitLine("    setup()")
         self.identation = 0 
 
     def moveLeft(self):
-        self.emitLine("pass")
+        self.emitLine("board.stepper_write(25, *1100)")
+        self.emitLine("    board.send_reset()")
+        self.emitLine("    time.sleep(6)")
+        self.emitLine("    setup()")
         self.identation = 0
 
     def stop(self):
