@@ -39,7 +39,7 @@ class Lexer:
 		
     # Skip comments in the code.
     def skipComment(self):
-        if self.curChar + self.peek() == '-':
+        if self.curChar + self.peek() == '--':
             while self.curChar != '\n':
                 self.nextChar()
 
@@ -98,7 +98,8 @@ class Lexer:
             'N' : TokenController.n,
             'S' : TokenController.s,
             'E' : TokenController.e,
-            'O' : TokenController.o    
+            'O' : TokenController.o,    
+            'Break' : TokenController.Break
         } 
 
         tokenText = self.curChar

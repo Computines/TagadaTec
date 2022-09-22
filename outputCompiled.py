@@ -1,33 +1,99 @@
+from pymata4 import pymata4
+import time
+numStep = 512
+pinStepper = [7,6,5,4]
+board = pymata4.Pymata4()
+phase1 = 5
+phase2 = 0
+def setup():
+    board.set_pin_mode_stepper(numStep, pinStepper)
+    board.set_pin_mode_servo(9)
+    board.set_pin_mode_servo(8)
+    board.servo_write(8, 90-phase1)
+    board.servo_write(9, 90-phase2)
+setup()
 true = True
 false = False
 def moveRight():
-    pass
+    board.stepper_write(25, 1100)
+    board.send_reset()
+    time.sleep(6)
+    setup()
 def moveLeft():
-    pass
+    board.stepper_write(25, *1100)
+    board.send_reset()
+    time.sleep(6)
+    setup()
 def stop():
     pass
 def hammer(orientation):
-    pass
+    if orientation == 'N':
+        board.servo_write(8, 120-phase1)
+        time.sleep(1)
+        board.servo_write(8, 90-phase1)
+        time.sleep(1)
+    elif orientation == 'S':
+        board.servo_write(8, 60-phase1)
+        time.sleep(1)
+        board.servo_write(8, 90-phase1)
+        time.sleep(1)
+    elif orientation == 'E':
+        board.servo_write(9, 120-phase1)
+        time.sleep(1)
+        board.servo_write(9, 90-phase1)
+        time.sleep(1)
+    elif orientation == 'O':
+        board.servo_write(9, 60-phase1)
+        time.sleep(1)
+        board.servo_write(9, 90-phase1)
+        time.sleep(1)
 def principal():
-    global bool
-    bool = true
-    global trululu
-    trululu = 3
-    global fium
-    fium = 5
-    trululu = fium+3
-    trep()
-    proc()
+    global var1
+    var1 = 1
+    global var2
+    var2 = 2
+    global var3
+    var3 = 3
+    global var4
+    var4 = 4
+    global varT
+    varT = true
+    global varF
+    varF = false
+    while True:
+        global variable1
+        variable1 = 5
+        moveLeft()
+        moveRight()
+        break
+    moveLeft()
+    moveRight()
+    variable1 = variable1+1
+    while variable1 > 10:
+        moveLeft()
+        moveRight()
+        variable1 = variable1+1
+    while varT > false:
+        moveLeft()
+        moveRight()
+        varT = not varT
+    if variab > 2:
+        moveLeft()
+        moveRight()
+    if varT:
+        moveLeft()
+        moveRight()
+    else:
+        moveLeft()
+        moveLeft()
+    if variable1 == 1:
+        moveLeft()
+    elif variable1 == 2:
+        moveRight()
+    elif variable1 == 3:
+        moveLeft()
+    if variable2 == true:
+        moveLeft()
+    else:
+        moveRight()
     
-def trep():
-    variable2 = 5
-    variable1 = 5
-    variable2 = fium-3
-    print(""+str(variable2)+" ")
-    
-def proc():
-    variable2 = 3
-    variable1 = 5
-    variable2 = trululu+3
-    
-principal()
