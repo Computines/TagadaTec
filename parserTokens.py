@@ -174,16 +174,14 @@ class Parser:
                 else:
                     self.abort("Data type does not match with variable's type")
         else:
-            self.expectedGlobal.append((statement[1].text, procName))
+            self.expectedGlobal.append((statement[3].text, procName))
 
     def controlCase(self, statement: list, procName: str):
+        print(self.convertTokenToText(statement))
         for variable in self.variables.items():
-            if isinstance(statement[2], list) or variable[0] == statement[3].text and variable[1][0] == procName:
-                if isinstance(statement[2], list) or (variable[1][1] == "Bool" and (statement[5].kind == TokenType.true or statement[5].kind == TokenType.false)) or \
-                    (variable[1][1] == "Num" and statement[5].kind == TokenType.Number):
-                    break
-                else:
-                    self.abort("Data type does not match with variable's type")
+            if variable[0] == statement[1].text and variable[1][0] == procName:
+                
+                break
         else:
             self.expectedGlobal.append((statement[1].text, procName))
 
