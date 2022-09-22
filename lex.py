@@ -39,7 +39,7 @@ class Lexer:
 		
     # Skip comments in the code.
     def skipComment(self):
-        if self.curChar + self.peek() == '-':
+        if self.curChar + self.peek() == '--':
             while self.curChar != '\n':
                 self.nextChar()
 

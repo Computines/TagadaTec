@@ -377,7 +377,7 @@ class Interface:
         yscrollCode.place(x=WIDTH, y=MENUHEIGHT, anchor=NE, height=HEIGHT-MENUHEIGHT-CONHEIGHT-13)
         xscrollCode.place(x=TOOLBWIDTH+FOLDERWIDTH+NUMBERSWIDTH, y=HEIGHT-CONHEIGHT+1, anchor=SW, width=WIDTH-TOOLBWIDTH-FOLDERWIDTH-NUMBERSWIDTH+2)
 
-        codingArea= Text(mainPanel, background=BACKGROUND, highlightthickness=0, height=20, width=110, highlightcolor=BACKGROUND, fg= 'white', insertbackground='white', yscrollcommand=yscrollCode.set, xscrollcommand=xscrollCode.set, wrap="none")
+        codingArea= Text(mainPanel, background=BACKGROUND, highlightthickness=0, height=20, width=110, highlightcolor=BACKGROUND, fg= 'white', insertbackground='white', yscrollcommand=yscrollCode.set, xscrollcommand=xscrollCode.set, wrap="none", borderwidth=0)
         codingArea.place(x=-1,y=-1)
         codingArea.config(spacing1=SPACING)    # Spacing above the first line in a block of text
         font = tkfont.Font(font=codingArea['font'])
@@ -392,6 +392,13 @@ class Interface:
         xscrollCode.config(command=codingArea.xview)
         yscrollCode.config(command=multipleyView)
 
+        def OnMouseWheel(event):
+            codingArea.yview("scroll", int(-1*(event.delta/120)), "units")
+            numbArea.yview("scroll", int(-1*(event.delta/120)), "units")
+
+        codingArea.bind("<MouseWheel>", OnMouseWheel)
+        numbArea.bind("<MouseWheel>", OnMouseWheel)
+
         def newCodeLine(event):
             cleanErrors()
             cleanLines()
@@ -401,9 +408,12 @@ class Interface:
             numbArea.delete('1.0', END)
             if int(currentLine) > 1:
                 for i in range(currentLine):
-                    numbArea.insert(END,str(i+1)+"\n")
+                    if i == 0:
+                        numbArea.insert('1.0',"1")
+                    else:
+                        numbArea.insert(END,"\n"+str(i+1))
             else:
-                numbArea.insert(END,"1\n")
+                numbArea.insert('1.0',"1")
             numbArea.config(state=DISABLED)
         
 
@@ -486,8 +496,17 @@ class Interface:
                     if firstLine == 0 and firstChar == 0:
                         firstLine=i
                         firstChar=j;
+                    comment = codingArea.get(str(i)+"."+str(j), str(i)+"."+str(j+2))
                     char = codingArea.get(str(i)+"."+str(j), str(i)+"."+str(j+1))
-                    if char == " " or char == "\n" or  char == "\t" or char == "\r" or char == ";":
+                    if comment == "--":
+                        codingArea.tag_add(str(n), str(i)+"."+str(firstChar), str(i)+"."+str(int(len(codingArea.get(str(i)+".0", 'end-1c')))))
+                        codingArea.tag_config(str(n),
+                            foreground="#6A9955")
+                        token=""
+                        firstLine=0
+                        firstChar=0
+                        break
+                    elif char == " " or char == "\n" or  char == "\t" or char == "\r" or char == ";":
                         lexTheToken(token, firstLine, firstChar, i, j, n)
                         token=""
                         firstLine=0
@@ -537,8 +556,15 @@ class Interface:
         yscrollConsole.config(command=consoleArea.yview)
 
         ########################## PROGRAMA ###########################
+        def validateComment(code):
+            if code.split('\n', 1)[0][:2] == "--":
+                pass
+            else:
+                raise Exception("Lexer error in line 1. There is no initial comment.")
+            
         def buildFile(e):
             try:
+                validateComment(codingArea.get('1.0', END))
                 lexer = Lexer(codingArea.get('1.0', END))
                 emitter = Emitter("outputCompiled.py")
                 parser = Parser(lexer, emitter)
