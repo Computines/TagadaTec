@@ -97,6 +97,7 @@ class Emitter:
     
     def endProc(self):
         if self.principal == True:
+            self.emitLine("pass")
             self.principal = False
         self.emitLine("")
         self.identation = 0

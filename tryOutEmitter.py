@@ -10,7 +10,7 @@ def main():
     new6 = ['New', '@meSientoFeliz', ',', '(', 'Num', ',', '1', ')']
     values = ['Values', '(', '@variable1', ',', ['Alter', '(', '@variable2', ',', 'SUB', ',', '3', ')'], ')']
     until =  ['Until', '(', ['Stop'], ['While', '@variable1', '==', '5' , '(', ['Values', '(', '@variable1', ',', ['Alter', '(', '@variable2', ',', 'SUB', ',', '3', ')'], ')'],')',],')', '@variable1', '>=', '5' ]
-    whiles =  ['While', '@variable1', '==', '5' , '(', ['Values', '(', '@variable1', ',', ['Alter', '(', '@variable2', ',', 'SUB', ',', '3', ')'], ')'],')',]
+    whiles =  ['While', '@variable1', '<>', '5' , '(', ['Values', '(', '@variable1', ',', ['Alter', '(', '@variable2', ',', 'SUB', ',', '3', ')'], ')'],')',]
     whilesTrue =  ['While', ['IsTrue', '(', '@variableBool', ')'], '(', ['Values', '(', '@variable1', ',', ['Alter', '(', '@variable2', ',', 'SUB', ',', '3', ')'], ')'], 'Break',')',]
     caseWhen = ['Case', 'When', ['IsTrue', '(', '@variableBool', ')'], 'Then', '(', ['MoveRight'], ')', 'Else', '(', ['MoveLeft'], ')']
     alterB = ['AlterB', '(', '@variableBool', ')']

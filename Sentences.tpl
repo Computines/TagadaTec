@@ -1,3 +1,4 @@
+--Yolo
 Proc @principal(
 New @var1, (Num, 1);
 New @var2, (Num, 2);
@@ -26,7 +27,7 @@ MoveRight;
 AlterB (@varT);
 );
 
-Case When ( @variab > 2) Then (
+Case When ( @var1 > 2) Then (
 MoveLeft;
 MoveRight;
 );
@@ -48,13 +49,18 @@ Case @variable1
  ( MoveLeft;);
 
 
-Case @variable2
+Case @varF
  When true Then
  ( MoveLeft;)
  Else
  ( MoveRight;);
 
 );
+
+
+
+
+
 
 
 
