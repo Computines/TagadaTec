@@ -45,7 +45,7 @@ class Emitter:
         if input[0] != 'Until':
             self.emitIdentation()
         if input[0] == 'Proc':
-            print("PROC")
+            # print("PROC")
             self.procStatement(input)
         elif input[0] == 'EndProc':
             self.endProc()
@@ -104,7 +104,7 @@ class Emitter:
     def newVariable (self, input):
         variableName = self.getVariableName(input, 1)
         variableValue = input[6]
-        print(self.principal)
+        # print(self.principal)
         if self.principal== True:
             self.emitLine('global '+ variableName)
             self.emitIdentation()
@@ -192,7 +192,7 @@ class Emitter:
             currentPos = 7
 
         currentPos = self.checkIntructions(currentPos + 1, input)
-        if currentPos < len(input):
+        if currentPos != None:
             self.emitIdentation()
             self.emitLine("else:")
             self.checkIntructions(currentPos + 1, input)
@@ -202,7 +202,7 @@ class Emitter:
         variableName = self.getVariableName(input, 1)
         self.emitLine("if "+ variableName + " == " + input[3]+ ":")
         currentPosition = self.checkIntructions(5, input)
-        while currentPosition <= len(input):
+        while currentPosition != None or currentPosition == len(input):
             self.emitIdentation()
             if input[currentPosition] == 'Else':
                 self.emitLine("else:")
@@ -265,14 +265,13 @@ class Emitter:
                 elif input[position][0] == 'PrintValues':
                     self.printValues(input[position])
                 elif input[position][0] == 'AlterB':
-                    self.alterB(input)
+                    self.alterB(input[position])
+                elif input[position][0] == 'Break':
+                    self.emitLine("break")
             elif input[position] == '(':
                 self.identation += 1
             elif input[position] == ')':
                 self.identation -= 1
-            elif input[position] == 'Break':
-                self.emitIdentation()
-                self.emitLine("break")
             else:
                 return position
     

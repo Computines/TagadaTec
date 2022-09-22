@@ -14,7 +14,7 @@ def regexGenerator(informalRegex):
             for t in orList:
                 orRegex += f"({Token.checkTokenType(t, 0).value})"
             finalRegex += orRegex.replace(")(", "|")
-        elif token == "(" or token == ")" or token == "?":
+        elif token == "(" or token == ")" or token == "?" or token == "|":
             finalRegex += token
         elif token == "*":
             finalRegex += ".*"

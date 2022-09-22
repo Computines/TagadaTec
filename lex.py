@@ -98,7 +98,8 @@ class Lexer:
             'N' : TokenController.n,
             'S' : TokenController.s,
             'E' : TokenController.e,
-            'O' : TokenController.o    
+            'O' : TokenController.o,    
+            'Break' : TokenController.Break
         } 
 
         tokenText = self.curChar

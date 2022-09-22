@@ -8,6 +8,9 @@ New @variable2,(Num, 3);
 New @variable1,(Num, 5);
 Values(@variable2, Alter(@variable1, ADD, 3));
 );
+Proc @principal(
+);
 CALL(@trep);
 CALL(@trep);
+
 

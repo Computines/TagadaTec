@@ -7,6 +7,7 @@ from tkinter import *
 from tkinter import ttk
 import os
 import tkinter.font as tkfont
+import traceback
 from tkinter import filedialog
 from lex import *
 from parserTokens import Parser
@@ -460,13 +461,13 @@ class Interface:
                 return "#67cefe"
             elif kind == 3:
                 return "#cb5923"
-            elif kind>100 and kind<200:
+            elif kind>100 and kind<=200:
                 return "#c586c0"
-            elif kind>200 and kind<216:
+            elif kind>200 and kind<=217:
                 return "#dcdcaa"
-            elif kind>216 and kind<300:
+            elif kind>217 and kind<=300:
                 return "#499bd6"
-            elif kind>300 and kind<400:
+            elif kind>300 and kind<=400:
                 return "#499bd6"
             else:
                 return "white" 
@@ -576,6 +577,7 @@ class Interface:
                 except:
                     pass
                 newConsoleLine(str(n))
+                traceback.print_exc()
 
         def runFile(e):
             buildFile(e)
@@ -584,7 +586,8 @@ class Interface:
                 newConsoleLine(os.popen('outputCompiled.py').read())
             except Exception as n:
                 errorLine(n)
-                newConsoleLine(str(n))  
+                newConsoleLine(str(n))
+                traceback.print_exc() 
 
         buildButton.bind('<Button-1>',buildFile)
         runButton.bind('<Button-1>',runFile)
