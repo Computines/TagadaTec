@@ -16,6 +16,7 @@ from emitter import *
 
 fnt=("Arial",10)
 filename = ""
+n=0
 hasstyle = False
 SPACING     =   5
 WIDTH       =   1200
@@ -286,7 +287,8 @@ class Interface:
                 openedFile["text"]=filename.split('/')[-1]+" - TagaPlate"
                 file=open(filename,"r+")
                 readFile(file)
-                newCodeLine(1)
+                firstColorCode()
+                newNumberLine()
         
         def saveChanges():
             global filename
@@ -320,7 +322,8 @@ class Interface:
                 openedFile["text"]=folderTree.item(item,"text")+" - TagaPlate"
                 file=open(filename,"r+")
                 readFile(file)
-                newCodeLine(1)
+                firstColorCode()
+                newNumberLine()
             except:
                 codingArea.insert(END,"Error al abrir archivo")
 
@@ -399,16 +402,15 @@ class Interface:
 
         codingArea.bind("<MouseWheel>", OnMouseWheel)
         numbArea.bind("<MouseWheel>", OnMouseWheel)
-
-        def newCodeLine(event):
-            cleanErrors()
-            cleanLines()
-            colorCode()
+            
+        def newNumberLine():
+            print("Estoy en numberline")
             numbArea.config(state=NORMAL)
             currentLine = int(codingArea.index('end-1c').split('.')[0])
             numbArea.delete('1.0', END)
             if int(currentLine) > 1:
                 for i in range(currentLine):
+                    print("Estoy en for")
                     if i == 0:
                         numbArea.insert('1.0',"1")
                     else:
@@ -417,6 +419,14 @@ class Interface:
                 numbArea.insert('1.0',"1")
             numbArea.config(state=DISABLED)
         
+        def newCodeLine(event):
+            cleanErrors()
+            cleanLines(int(codingArea.index(INSERT).split('.')[0]))
+            colorCode(int(codingArea.index(INSERT).split('.')[0]))
+            print(int(codingArea.index(INSERT).split('.')[0]))
+            print(int(numbArea.index('end-1c').split('.')[0]))
+            if int(codingArea.index(INSERT).split('.')[0]) >= int(numbArea.index('end-1c').split('.')[0]):
+                newNumberLine()
 
         codingArea.bind("<KeyRelease>", newCodeLine)
 
@@ -450,9 +460,9 @@ class Interface:
                 background=BACKGROUND,
                 foreground=LIGHTERBG)
         
-        def cleanLines():
+        def cleanLines(i):
             for tag in codingArea.tag_names():
-                codingArea.tag_remove(tag, "1.0", "end")
+                codingArea.tag_remove(tag, str(i)+".0", str(i)+"."+str(int(len(codingArea.get(str(i)+".0", 'end-1c')))))
 
         def getColor(kind):
             if kind == 1:
@@ -485,50 +495,60 @@ class Interface:
             except Exception as e:
                 pass
 
-        def colorCode():
+        def colorCode(i):
+            global n
             firstLine=0
             firstChar=0
-            n=0
-            i=1
             j=0
             token=""
-            while i<=int(codingArea.index('end-1c').split('.')[0]):
-                while j<len(codingArea.get(str(i)+".0", 'end-1c')):
-                    if firstLine == 0 and firstChar == 0:
-                        firstLine=i
-                        firstChar=j;
-                    comment = codingArea.get(str(i)+"."+str(j), str(i)+"."+str(j+2))
-                    char = codingArea.get(str(i)+"."+str(j), str(i)+"."+str(j+1))
-                    if comment == "--":
+            while j<len(codingArea.get(str(i)+".0", 'end-1c')):
+                if firstLine == 0 and firstChar == 0:
+                    firstLine=i
+                    firstChar=j;
+                comment = codingArea.get(str(i)+"."+str(j), str(i)+"."+str(j+2))
+                char = codingArea.get(str(i)+"."+str(j), str(i)+"."+str(j+1))
+                if comment == "--":
+                    if j != 0: 
                         codingArea.tag_add(str(n), str(i)+"."+str(firstChar), str(i)+"."+str(int(len(codingArea.get(str(i)+".0", 'end-1c')))))
                         codingArea.tag_config(str(n),
                             foreground="#6A9955")
-                        token=""
-                        firstLine=0
-                        firstChar=0
-                        break
-                    elif char == " " or char == "\n" or  char == "\t" or char == "\r" or char == ";":
-                        lexTheToken(token, firstLine, firstChar, i, j, n)
-                        token=""
-                        firstLine=0
-                        firstChar=0
-                    elif char == "(" or char == ")":
-                        lexTheToken(token, firstLine, firstChar, i, j, n)
-                        n+=1
-                        token=""
-                        codingArea.tag_add(str(n), str(i)+"."+str(j), str(i)+"."+str(j+1))
-                        codingArea.tag_config(str(n),
-                            foreground="#c586c0")
-                        firstLine=0
-                        firstChar=0
                     else:
-                        token+=char
-                    
-                    j+=1
+                        codingArea.tag_add(str(n), str(i)+"."+str(0), str(i)+"."+str(int(len(codingArea.get(str(i)+".0", 'end-1c')))))
+                        codingArea.tag_config(str(n),
+                            foreground="#6A9955")
+                    token=""
+                    firstLine=0
+                    firstChar=0
+                    j=-1
+                    break;
+                if char == " " or char == "\n" or  char == "\t" or char == "\r" or char == ";":
+                    lexTheToken(token, firstLine, firstChar, i, j, n)
+                    token=""
+                    firstLine=0
+                    firstChar=0
+                elif char == "(" or char == ")":
+                    lexTheToken(token, firstLine, firstChar, i, j, n)
                     n+=1
-                i+=1
+                    token=""
+                    codingArea.tag_add(str(n), str(i)+"."+str(j), str(i)+"."+str(j+1))
+                    codingArea.tag_config(str(n),
+                        foreground="#c586c0")
+                    firstLine=0
+                    firstChar=0
+                else:
+                    token+=char
+                
+                j+=1
                 n+=1
-                j=0
+
+        def firstColorCode():
+            global n
+            n=0
+            i=0
+            while i<=int(codingArea.index('end-1c').split('.')[0]):
+                colorCode(i)
+                i+=1
+            n+=1
 
 
         ########################## CONSOLA ###########################
