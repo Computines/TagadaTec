@@ -203,7 +203,7 @@ class Emitter:
         variableName = self.getVariableName(input, 1)
         self.emitLine("if "+ variableName + " == " + input[3]+ ":")
         currentPosition = self.checkIntructions(5, input)
-        while currentPosition != None or currentPosition == len(input):
+        while currentPosition != None:
             self.emitIdentation()
             if input[currentPosition] == 'Else':
                 self.emitLine("else:")

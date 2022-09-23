@@ -404,13 +404,11 @@ class Interface:
         numbArea.bind("<MouseWheel>", OnMouseWheel)
             
         def newNumberLine():
-            print("Estoy en numberline")
             numbArea.config(state=NORMAL)
             currentLine = int(codingArea.index('end-1c').split('.')[0])
             numbArea.delete('1.0', END)
             if int(currentLine) > 1:
                 for i in range(currentLine):
-                    print("Estoy en for")
                     if i == 0:
                         numbArea.insert('1.0',"1")
                     else:
@@ -423,8 +421,6 @@ class Interface:
             cleanErrors()
             cleanLines(int(codingArea.index(INSERT).split('.')[0]))
             colorCode(int(codingArea.index(INSERT).split('.')[0]))
-            print(int(codingArea.index(INSERT).split('.')[0]))
-            print(int(numbArea.index('end-1c').split('.')[0]))
             if int(codingArea.index(INSERT).split('.')[0]) >= int(numbArea.index('end-1c').split('.')[0]):
                 newNumberLine()
 
