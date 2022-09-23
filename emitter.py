@@ -15,10 +15,10 @@ class Emitter:
         self.currentToken = None
         self.nextToken = None
         self.identation = 0
-        self.emitHeader()
-        self.emitSetup()
+        # self.emitHeader()
+        # self.emitSetup()
         self.principal = False
-        self.commonFuntions()
+        # self.commonFuntions()
 
 
     def abort(self, message):
@@ -148,10 +148,13 @@ class Emitter:
     def printValues(self, input):
         insidePrint = '""'
         for element in input[2:len(input)-1]:
+            # print(element);
             if element[0] == '@':
                 insidePrint = insidePrint + '+'+ "str(" + element[1:] + ")" + '+'+ '" "'
-            elif element[0] == '\"':
-                insidePrint = insidePrint + '+' + element + '+' +'" "' 
+            elif element[0] == ',':
+                pass
+            else:
+                insidePrint += '+ "' + element + '" +' +'" "'
         self.emitLine("print(" + insidePrint + ")")
 
 #until =  ['Until', '(', ['MoveRight'], ['While', '@variable1', '==', '5' , '(', ['Values', '(', '@variable1', ',', ['Alter', '(', '@variable2', ',', 'SUB', ',', '3', ')'], ')'],')',],')', '@variable1', '>=', '5' ]
@@ -290,7 +293,7 @@ class Emitter:
             else:
                 self.emitLine("def " + function + "(orientation):")
             self.emitIdentation()
-            functions.get(function)() 
+            functions.get(function)()
 
     def emitHeader(self):
         self.emitLine("from pymata4 import pymata4")
@@ -300,25 +303,31 @@ class Emitter:
         self.emitLine("board = pymata4.Pymata4()")
         self.emitLine("phase1 = 5")
         self.emitLine("phase2 = 0")
+        pass
 
     def emitSetup(self):
         self.emitLine("def setup():")
         self.emitIdentation()
         self.setup()
         self.emitLine("setup()")
+        pass
 
 
     def hammerStatement(self, orientation):
         self.emitLine("hammer("+orientation+")")
+        pass
 
     def moveRightStatement(self):
         self.emitLine("moveRight()")
+        pass
 
     def moveLeftStatement(self):
         self.emitLine("moveLeft()")
+        pass
 
     def stopStatement(self):
         self.emitLine("stop()")
+        pass
 
     def setup(self):
         self.emitLine("    board.set_pin_mode_stepper(numStep, pinStepper)")
@@ -327,6 +336,7 @@ class Emitter:
         self.emitLine("    board.servo_write(8, 90-phase1)")
         self.emitLine("    board.servo_write(9, 90-phase2)")
         self.identation = 0
+        pass
 
     def hammer(self):
         self.emitLine("if orientation == 'N':")
@@ -338,19 +348,22 @@ class Emitter:
         self.emitLine("    elif orientation == 'O':")
         self.hammerInstructions(9, 60)
         self.identation = 0
+        pass
 
     def hammerInstructions(self, output, angle):
         self.emitLine("        board.servo_write(" + str(output) + ", " + str(angle) + "-phase1)")
         self.emitLine("        time.sleep(1)")
         self.emitLine("        board.servo_write(" + str(output) + ", " + "90-phase1)")
         self.emitLine("        time.sleep(1)")
+        pass
 
     def moveRight(self):
         self.emitLine("board.stepper_write(25, 1100)")
         self.emitLine("    board.send_reset()")
         self.emitLine("    time.sleep(6)")
         self.emitLine("    setup()")
-        self.identation = 0 
+        self.identation = 0
+        pass
 
     def moveLeft(self):
         self.emitLine("board.stepper_write(25, *1100)")
@@ -358,10 +371,12 @@ class Emitter:
         self.emitLine("    time.sleep(6)")
         self.emitLine("    setup()")
         self.identation = 0
+        pass
 
     def stop(self):
         self.emitLine("pass")
         self.identation = 0 
+        pass
     
     def printCode(self):
         return self.code

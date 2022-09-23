@@ -1,4 +1,5 @@
-from os import abort
+from os import abort, stat
+from pickletools import read_int4
 import sys
 from statementAnalizer import StatementAnalizer
 from tokenController import TokenType, Token
@@ -46,18 +47,20 @@ class Parser:
         self.peekToken = self.lexer.getToken()
         # No need to worry about passing the EOF, lexer handles that.
 
-    def abort(self, message):
-        raise Exception("Parser error in line "+ str(self.newLineCounter) +". "+ message)
-
+    def abort(self, message, type= "line"):
+        if type == "line":
+            raise Exception("Parser error in line "+ str(self.newLineCounter) +". "+ message)
+        else:
+            raise Exception("Parser error. "+message)
     def existPrincipal(self):
         if not "@principal" in self.procs:
-            self.abort("@principal proc not found")
+            self.abort("@principal proc not found","")
 
     def globalVarsCheck(self):
         for var in self.expectedGlobal:
             # print(var)
             if not (var[0] in self.variables.keys() and (self.variables[var[0]][0] == "@principal" or self.variables[var[0]][0] == "noProc")):
-                self.abort(f"Variable {var[0]} not initialized")
+                self.abort(f"Variable {var[0]} not initialized","")
 
     def program(self):
         # Parse all the statements in the program.
@@ -75,6 +78,7 @@ class Parser:
             elif Token.checkIfKeyword(self.curToken.text):
                 statement = self.statement("noProc")
                 listOfTokens = self.convertTokenToText(statement)
+                self.callTester(listOfTokens)
                 self.emitter.emitStatement(listOfTokens)
                 self.nextToken()
             elif self.checkToken(TokenType.EOF):
@@ -85,7 +89,15 @@ class Parser:
                 # print(self.newLineCounter)
                 break
             else:
-                self.abort("Sintax error: Statement not initialized by keyword")
+                self.abort("Sintax error: Statement not initialized by keyword","")
+
+    def callTester(self, listOfTokens):
+        if listOfTokens[0] == 'CALL':
+            if listOfTokens[2] != '@principal':
+                self.abort('Statement out of procedure, only call principal can be out of procedure')
+
+
+        
 
     def controlNew(self, statement: list, procName: str):
         if ((statement[4].text == "Bool" and (statement[6].kind == TokenType.true or statement[6].kind == TokenType.false)) or \
@@ -95,7 +107,7 @@ class Parser:
         elif statement[1].text in self.variables.keys():
             self.abort("Variable " + statement[1].text + " is already defined")
         else:
-            self.abort("Data type does not match with initialize type")
+            self.abort("Data type does not match with initialized type")
 
     def controlValues(self, statement: list, procName: str):
         for variable in self.variables.items():
@@ -185,6 +197,18 @@ class Parser:
         else:
             self.expectedGlobal.append((statement[1].text, procName))
 
+#check this
+    def controlPrintValues(self, statement: list, procName: str):
+        # print(self.convertTokenToText(statement))
+        innerPrint = statement[2:-1]
+        for i in range(0,len(innerPrint),2):
+            if innerPrint[i].kind == TokenType.VARIABLE_NAME and \
+                innerPrint[i].text in self.variables.keys():
+                pass
+            elif innerPrint[i].kind == TokenType.VARIABLE_NAME:
+                self.expectedGlobal.append((innerPrint[i].text, procName))
+
+
     def controlVariables(self, statement: list, procName: str):
         if statement[0].kind == TokenType.New:
             self.controlNew(statement, procName)
@@ -213,13 +237,16 @@ class Parser:
         elif statement[0].kind == TokenType.Case:
             self.controlCase(statement, procName)
 
+        elif statement[0].kind == TokenType.PrintValues:
+            self.controlPrintValues(statement, procName)
+
     def analizeProc(self):
         # Proc Header Structure Seek
         self.nextToken() # Skip Proc Token
         procName = self.curToken.text # Save the Proc Name
         
         if procName in self.procs:
-            self.abort("Proc " + procName + " is defined more than once")
+            self.abort("Proc " + procName + " is defined more than once","")
         else:
             self.procs.append(procName)
 
@@ -231,7 +258,7 @@ class Parser:
 
         while self.curToken.text != ';':
             if self.checkToken(TokenType.Proc):
-                self.abort("Sintax error: Proc into a proc")
+                self.abort("Sintax error: Proc into a proc","")
             elif self.checkToken(TokenType.VARIABLE_NAME):
                 procName = self.curToken.text
                 self.nextToken()
@@ -249,7 +276,7 @@ class Parser:
                 self.nextToken()
                 break
             elif self.checkToken(TokenType.EOF):
-                self.abort("Sintax error: Proc never finalized")
+                self.abort("Sintax error: Proc never finalized","")
             else:
                 self.abort("Sintax error: Statement not initialized by keyword")
 
@@ -275,9 +302,9 @@ class Parser:
             if Token.checkIfKeyword(self.curToken.text) and self.curToken.text != keyword.text and not self.checkToken(TokenType.Proc):
                 tokenList.append(self.statement(procName)) # Recursive Call
             elif self.checkToken(TokenType.Proc):
-                self.abort("Sintax error: Proc inside a statement")
+                self.abort("Sintax error: Proc inside a statement","")
             elif self.checkToken(TokenType.EOF):
-                self.abort("Sintax Error: Statement never finalize")
+                self.abort("Sintax Error: Statement never finalized","")
             elif self.curToken.text == "\n":
                 self.newLineCounter += 1
             elif self.curToken.text != "\n" and self.curToken.text != ";":

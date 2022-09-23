@@ -397,11 +397,14 @@ class Interface:
         yscrollCode.config(command=multipleyView)
 
         def OnMouseWheel(event):
-            codingArea.yview("scroll", int(-1*(event.delta/120)), "units")
-            numbArea.yview("scroll", int(-1*(event.delta/120)), "units")
+            if event.delta > 0:
+                numbArea.yview(MOVETO ,codingArea.yview()[0]-0.025)
+            else:
+                numbArea.yview(MOVETO ,codingArea.yview()[0]+0.025)
+            print(codingArea.yview())
+            print(numbArea.yview())
 
         codingArea.bind("<MouseWheel>", OnMouseWheel)
-        numbArea.bind("<MouseWheel>", OnMouseWheel)
             
         def newNumberLine():
             numbArea.config(state=NORMAL)
@@ -421,8 +424,8 @@ class Interface:
             cleanErrors()
             cleanLines(int(codingArea.index(INSERT).split('.')[0]))
             colorCode(int(codingArea.index(INSERT).split('.')[0]))
-            if int(codingArea.index(INSERT).split('.')[0]) >= int(numbArea.index('end-1c').split('.')[0]):
-                newNumberLine()
+            newNumberLine()
+            numbArea.yview(MOVETO ,codingArea.yview()[0])
 
         codingArea.bind("<KeyRelease>", newCodeLine)
 
@@ -517,7 +520,7 @@ class Interface:
                     firstChar=0
                     j=-1
                     break;
-                if char == " " or char == "\n" or  char == "\t" or char == "\r" or char == ";":
+                if char == " " or char == "" or char == "\n" or  char == "\t" or char == "\r" or char == ";":
                     lexTheToken(token, firstLine, firstChar, i, j, n)
                     token=""
                     firstLine=0
@@ -593,17 +596,17 @@ class Interface:
                 except:
                     pass
                 newConsoleLine(str(n))
-                traceback.print_exc()
+                #traceback.print_exc()
 
         def runFile(e):
             buildFile(e)
             try:
-                #os.system('outputCompiled.py')
-                newConsoleLine(os.popen('outputCompiled.py').read())
+                # os.system('outputCompiled.py')
+                newConsoleLine(os.popen('py ./outputCompiled.py').read())
             except Exception as n:
                 errorLine(n)
                 newConsoleLine(str(n))
-                traceback.print_exc() 
+                # traceback.print_exc() 
 
         buildButton.bind('<Button-1>',buildFile)
         runButton.bind('<Button-1>',runFile)

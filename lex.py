@@ -126,9 +126,9 @@ class Lexer:
         elif self.curChar.isdigit():
             tokenText = self.checkNumbers() 
             keyValue = 'Number'
-        elif self.curChar == '\"':
+        elif self.curChar == '[':
             tokenText = self.checkStrings()
-            keyValue == 'String'
+            keyValue = 'String'
         elif self.curChar == ',' or self.curChar == ';':
             tokenText = self.checkComaAndSemiColon()
             keyValue = tokenText
@@ -141,11 +141,8 @@ class Lexer:
             tokenText = keyValue
             self.newLineCount += 1
 
-
-
-
         try:
-           # print(tokenText)
+            # print("token2:", tokenText, "key:", keyValue) 
             controller = posibleTokens.get(keyValue) 
             token = controller(tokenText) 
         except:
@@ -189,14 +186,14 @@ class Lexer:
             # Get characters between quotations.
             self.nextChar()
             startPos = self.curPos
-
-            while self.curChar != '\"':
+            while self.curChar != ']':
                 # Don't allow special characters in the string. No escape characters, newlines, tabs, or %.
                 # We will be using C's printf on this string.
                 if self.curChar == '\r' or self.curChar == '\n' or self.curChar == '\t' or self.curChar == '\\' or self.curChar == '%':
                     self.abort("Illegal character in string.")
                 self.nextChar()
 
+            # print("estoy en strings")
             tokenText = self.source[startPos : self.curPos] # Get the substring.
             return tokenText
 

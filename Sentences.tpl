@@ -54,8 +54,17 @@ Case @varF
  ( MoveLeft;)
  Else
  ( MoveRight;);
-
+PrintValues([hola], @varF);
 );
+
+Proc @proc(
+AlterB(@varF);
+);
+
+CALL (@principal);
+
+
+
 
 
 
