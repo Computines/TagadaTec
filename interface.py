@@ -401,8 +401,6 @@ class Interface:
                 numbArea.yview(MOVETO ,codingArea.yview()[0]-0.025)
             else:
                 numbArea.yview(MOVETO ,codingArea.yview()[0]+0.025)
-            print(codingArea.yview())
-            print(numbArea.yview())
 
         codingArea.bind("<MouseWheel>", OnMouseWheel)
             
@@ -469,14 +467,12 @@ class Interface:
             elif kind == 2:
                 return "#67cefe"
             elif kind == 3:
-                return "#cb5923"
-            elif kind>100 and kind<=200:
+                return "#CE7A57"
+            elif (kind>100 and kind<=200 and kind != 105 and kind != 106 and kind != 109 and kind != 110 and kind != 115) or kind == 220 or kind == 221 or kind == 222:
                 return "#c586c0"
-            elif kind>200 and kind<=217:
+            elif (kind>200 and kind<=217) or kind == 105 or kind == 106 or kind == 109 or kind == 110:
                 return "#dcdcaa"
-            elif kind>217 and kind<=300:
-                return "#499bd6"
-            elif kind>300 and kind<=400:
+            elif (kind>217 and kind<=400 and kind != 220 and kind != 221 and kind != 222)  or kind == 115:
                 return "#499bd6"
             else:
                 return "white" 
@@ -520,7 +516,7 @@ class Interface:
                     firstChar=0
                     j=-1
                     break;
-                if char == " " or char == "" or char == "\n" or  char == "\t" or char == "\r" or char == ";":
+                if char == " " or char == "" or char == "\n" or  char == "\t" or char == "\r" or char == ";" or char == ",":
                     lexTheToken(token, firstLine, firstChar, i, j, n)
                     token=""
                     firstLine=0
@@ -531,9 +527,15 @@ class Interface:
                     token=""
                     codingArea.tag_add(str(n), str(i)+"."+str(j), str(i)+"."+str(j+1))
                     codingArea.tag_config(str(n),
-                        foreground="#c586c0")
+                        foreground="#F19F1B")
                     firstLine=0
                     firstChar=0
+                elif char == "[":
+                    token+=char
+                    while char != "]":
+                        j+=1
+                        char = codingArea.get(str(i)+"."+str(j), str(i)+"."+str(j+1))
+                        token+=char
                 else:
                     token+=char
                 
