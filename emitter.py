@@ -15,10 +15,10 @@ class Emitter:
         self.currentToken = None
         self.nextToken = None
         self.identation = 0
-        # self.emitHeader()
-        # self.emitSetup()
+        self.emitHeader()
+        self.emitSetup()
         self.principal = False
-        # self.commonFuntions()
+        self.commonFuntions()
 
 
     def abort(self, message):
