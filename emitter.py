@@ -37,6 +37,10 @@ class Emitter:
     def commonFuntions(self):
         self.emitLine("true = True")
         self.emitLine("false = False")
+        self.emitLine("N = 'N'")
+        self.emitLine("S = 'S'")
+        self.emitLine("E = 'E'")
+        self.emitLine("O = 'O'")
         self.emitFuntions()
 
     def emitStatement(self, input):
@@ -218,7 +222,6 @@ class Emitter:
             currentPosition = self.checkIntructions(currentPosition, input)
 #[Call, (, @proc, )]
     def callStatement(self, input):
-        # print("estoy aqui")
         procName = self.getVariableName(input, 2)
         self.emitLine(procName+"()")
 
@@ -272,6 +275,8 @@ class Emitter:
                     self.alterB(input[position])
                 elif input[position][0] == 'Break':
                     self.emitLine("break")
+                elif input[position][0] == 'CALL':
+                    self.callStatement(input[position])
             elif input[position] == '(':
                 self.identation += 1
             elif input[position] == ')':
@@ -299,9 +304,9 @@ class Emitter:
         self.emitLine("from pymata4 import pymata4")
         self.emitLine("import time")
         self.emitLine("numStep = 512")
-        self.emitLine("pinStepper = [7,6,5,4]")
+        self.emitLine("pinStepper = [7,5,6,4]")
         self.emitLine("board = pymata4.Pymata4()")
-        self.emitLine("phase1 = 5")
+        self.emitLine("phase1 = -5")
         self.emitLine("phase2 = 0")
         pass
 
@@ -340,13 +345,13 @@ class Emitter:
 
     def hammer(self):
         self.emitLine("if orientation == 'N':")
-        self.hammerInstructions(8, 120)
+        self.hammerInstructions(8, 115)
         self.emitLine("    elif orientation == 'S':")
-        self.hammerInstructions(8, 60)
-        self.emitLine("    elif orientation == 'E':")
-        self.hammerInstructions(9, 120)
+        self.hammerInstructions(8, 65)
         self.emitLine("    elif orientation == 'O':")
-        self.hammerInstructions(9, 60)
+        self.hammerInstructions(9, 115)
+        self.emitLine("    elif orientation == 'E':")
+        self.hammerInstructions(9, 65)
         self.identation = 0
         pass
 
@@ -359,17 +364,12 @@ class Emitter:
 
     def moveRight(self):
         self.emitLine("board.stepper_write(25, 1100)")
-        self.emitLine("    board.send_reset()")
-        self.emitLine("    time.sleep(6)")
-        self.emitLine("    setup()")
-        self.identation = 0
-        pass
+        self.emitLine("    time.sleep(7)")
+        self.identation = 0 
 
     def moveLeft(self):
-        self.emitLine("board.stepper_write(25, *1100)")
-        self.emitLine("    board.send_reset()")
-        self.emitLine("    time.sleep(6)")
-        self.emitLine("    setup()")
+        self.emitLine("board.stepper_write(25, -1100)")
+        self.emitLine("    time.sleep(7)")
         self.identation = 0
         pass
 

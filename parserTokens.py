@@ -294,7 +294,7 @@ class Parser:
             self.nextToken()
             tokenList.append(self.curToken)
             if not StatementAnalizer.analize(tokenList):
-                self.abort("Sintax error")
+                self.abort("Sintax error: Missing character in statement")
             self.controlVariables(tokenList, procName)
             return tokenList
 
